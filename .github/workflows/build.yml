@@ -34,8 +34,16 @@ jobs:
       - name: Install WiX Toolset
         run: |
           choco install -y wixtoolset
-          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
-          echo "WIX_PATH=$env:PATH" >> $env:GITHUB_ENV
+          $wixPath = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          if (Test-Path $wixPath) {
+            $env:PATH += ";$wixPath"
+            echo "Added WiX to PATH"
+          } else {
+            Write-Warning "WiX path not found at $wixPath"
+            Get-ChildItem "C:\Program Files*" -Filter "WiX*" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+          }
+          # Verify candle.exe
+          candle -? 2>&1 | head -5
 
       - name: Get dependencies
         working-directory: ./app
@@ -55,7 +63,7 @@ jobs:
 
       - name: Create MSIX
         working-directory: ./app
-        run: flutter pub run msix:create
+        run: flutter pub run msix:create --verbose
 
       - name: Upload MSIX artifact
         uses: actions/upload-artifact@v4
@@ -89,6 +97,7 @@ jobs:
         run: |
           brew install create-dmg
           echo "$(brew --prefix)/bin" >> $GITHUB_PATH
+          which create-dmg
 
       - name: Get dependencies
         working-directory: ./app
@@ -111,6 +120,11 @@ jobs:
         run: |
           APP_NAME="Q-Audio"
           APP_PATH="build/macos/Build/Products/Release/$APP_NAME.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "App bundle not found at $APP_PATH"
+            find build -name "*.app" -type d
+            exit 1
+          fi
           DMG_NAME="${APP_NAME}-${{ github.ref_name }}.dmg"
           create-dmg \
             --volname "$APP_NAME" \
