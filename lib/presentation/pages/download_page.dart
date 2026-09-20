@@ -104,7 +104,7 @@ class DownloadPage extends ConsumerWidget {
           Icon(
             Icons.download_outlined,
             size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -218,7 +218,7 @@ class DownloadPage extends ConsumerWidget {
         break;
       case DownloadStatus.pending:
         icon = Icons.schedule;
-        color = colorScheme.primary.withValues(alpha: 0.7);
+        color = colorScheme.primary.withOpacity(0.7);
         break;
       case DownloadStatus.paused:
         icon = Icons.pause_circle;

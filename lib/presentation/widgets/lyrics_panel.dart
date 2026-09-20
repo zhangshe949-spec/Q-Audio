@@ -81,13 +81,13 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
           Icon(
             Icons.lyrics_outlined,
             size: 48,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: 12),
           Text(
             message,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
                 ),
             textAlign: TextAlign.center,
           ),
@@ -144,7 +144,7 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
             padding: const EdgeInsets.symmetric(vertical: 4),
             decoration: isCurrent
                 ? BoxDecoration(
-                    color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                    color: theme.colorScheme.primaryContainer.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(8),
                   )
                 : null,
@@ -163,7 +163,7 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
                   Text(
                     translation,
                     style: isCurrent
-                        ? translationStyle.copyWith(color: theme.colorScheme.primary.withValues(alpha: 0.8))
+                        ? translationStyle.copyWith(color: theme.colorScheme.primary.withOpacity(0.8))
                         : translationStyle,
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -276,7 +276,7 @@ class LyricsPage extends ConsumerWidget {
             Icon(
               Icons.lyrics_outlined,
               size: 80,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -297,14 +297,14 @@ class LyricsPage extends ConsumerWidget {
             Text(
               '暂无可用歌词',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
                   ),
             ),
             const SizedBox(height: 16),
             Text(
               '尝试切换音乐源或手动搜索',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
                   ),
             ),
           ],

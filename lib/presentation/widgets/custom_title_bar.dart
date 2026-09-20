@@ -163,8 +163,8 @@ class _DesktopTitleBar extends ConsumerWidget implements PreferredSizeWidget {
         child: Container(
           height: 40,
           color: isDark
-              ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.8)
-              : colorScheme.surface.withValues(alpha: 0.9),
+              ? colorScheme.surfaceContainerHighest.withOpacity(0.8)
+              : colorScheme.surface.withOpacity(0.9),
           child: Row(
             children: [
               // 应用图标和标题
@@ -211,29 +211,29 @@ class _WindowButtons extends StatelessWidget {
       children: [
         MinimizeWindowButton(
           colors: WindowButtonColors(
-            mouseOver: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            mouseDown: colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+            mouseOver: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+            mouseDown: colorScheme.surfaceContainerHighest.withOpacity(0.8),
             iconNormal: colorScheme.onSurfaceVariant,
             iconMouseOver: colorScheme.onSurface,
-            iconMouseDown: colorScheme.onSurface.withValues(alpha: 0.7),
+            iconMouseDown: colorScheme.onSurface.withOpacity(0.7),
           ),
         ),
         MaximizeWindowButton(
           colors: WindowButtonColors(
-            mouseOver: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            mouseDown: colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+            mouseOver: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+            mouseDown: colorScheme.surfaceContainerHighest.withOpacity(0.8),
             iconNormal: colorScheme.onSurfaceVariant,
             iconMouseOver: colorScheme.onSurface,
-            iconMouseDown: colorScheme.onSurface.withValues(alpha: 0.7),
+            iconMouseDown: colorScheme.onSurface.withOpacity(0.7),
           ),
         ),
         CloseWindowButton(
           colors: WindowButtonColors(
             mouseOver: colorScheme.error,
-            mouseDown: colorScheme.error.withValues(alpha: 0.8),
+            mouseDown: colorScheme.error.withOpacity(0.8),
             iconNormal: colorScheme.onSurface,
             iconMouseOver: Colors.white,
-            iconMouseDown: Colors.white.withValues(alpha: 0.8),
+            iconMouseDown: Colors.white.withOpacity(0.8),
           ),
         ),
       ],

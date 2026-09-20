@@ -56,32 +56,42 @@ class _AppearanceSection extends ConsumerWidget {
         const SizedBox(height: 12),
         // 主题模式
         Card(
-                  child: RadioGroup<ThemeMode>(
-                    groupValue: themeMode,
-                    onChanged: (value) {
-                      if (value != null) {
-                        ref.read(themeModeProvider.notifier).state = value;
-                      }
-                    },
-                    child: Column(
-                      children: [
-                        RadioListTile<ThemeMode>(
-                          title: const Text('跟随系统'),
-                          subtitle: const Text('自动根据系统深/浅色模式切换'),
-                          value: ThemeMode.system,
+                          child: Column(
+                            children: [
+                              RadioListTile<ThemeMode>(
+                                title: const Text('跟随系统'),
+                                subtitle: const Text('自动根据系统深/浅色模式切换'),
+                                value: ThemeMode.system,
+                                groupValue: themeMode,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    ref.read(themeModeProvider.notifier).state = value;
+                                  }
+                                },
+                              ),
+                              RadioListTile<ThemeMode>(
+                                title: const Text('浅色模式'),
+                                value: ThemeMode.light,
+                                groupValue: themeMode,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    ref.read(themeModeProvider.notifier).state = value;
+                                  }
+                                },
+                              ),
+                              RadioListTile<ThemeMode>(
+                                title: const Text('深色模式'),
+                                value: ThemeMode.dark,
+                                groupValue: themeMode,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    ref.read(themeModeProvider.notifier).state = value;
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        RadioListTile<ThemeMode>(
-                          title: const Text('浅色模式'),
-                          value: ThemeMode.light,
-                        ),
-                        RadioListTile<ThemeMode>(
-                          title: const Text('深色模式'),
-                          value: ThemeMode.dark,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
         const SizedBox(height: 12),
         // 强调色选择
         Card(
@@ -107,7 +117,7 @@ class _AppearanceSection extends ConsumerWidget {
         0xFF2E7D32: '绿色',
         0xFFC62828: '红色',
       };
-      return colors[color.toARGB32()] ?? '自定义';
+      return colors[color.value] ?? '自定义';
     }
 
   void _showAccentColorPicker(BuildContext context, WidgetRef ref) {
@@ -294,20 +304,19 @@ class _PlaybackSection extends ConsumerWidget {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    RadioGroup<int>(
-                      groupValue: selectedDuration,
-                      onChanged: (value) {
-                        if (value != null) setState(() => selectedDuration = value);
-                      },
-                      child: Column(
-                        children: [3, 5, 8, 10, 15].map((seconds) {
-                          return RadioListTile<int>(
-                            title: Text('$seconds 秒'),
-                            value: seconds * 1000,
-                          );
-                        }).toList(),
-                      ),
-                    ),
+                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [3, 5, 8, 10, 15].map((seconds) {
+                                        return RadioListTile<int>(
+                                          title: Text('$seconds 秒'),
+                                          value: seconds * 1000,
+                                          groupValue: selectedDuration,
+                                          onChanged: (value) {
+                                            if (value != null) setState(() => selectedDuration = value);
+                                          },
+                                        );
+                                      }).toList(),
+                                    ),
                   ],
                 ),
                 actions: [

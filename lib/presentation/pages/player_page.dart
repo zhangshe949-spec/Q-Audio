@@ -145,7 +145,7 @@ class _PlayerPageState extends ConsumerState<PlayerPage>
                                       boxShadow: [
                                         BoxShadow(
                                           color: Theme.of(context).colorScheme.primary
-                                              .withValues(alpha: 0.3),
+                                              .withOpacity(0.3),
                                           blurRadius: 30,
                                           spreadRadius: 5,
                                         ),

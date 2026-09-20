@@ -196,7 +196,7 @@ class LocalPage extends ConsumerWidget {
             value: state.processedFiles > 0
                 ? (state.foundTracks / state.processedFiles).clamp(0.0, 1.0)
                 : null,
-            backgroundColor: colorScheme.onPrimaryContainer.withValues(alpha: 0.2),
+            backgroundColor: colorScheme.onPrimaryContainer.withOpacity(0.2),
             valueColor: AlwaysStoppedAnimation(colorScheme.onPrimaryContainer),
           ),
           TextButton(
@@ -308,7 +308,7 @@ class LocalPage extends ConsumerWidget {
             Icon(
               Icons.music_off,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
             ),
             const SizedBox(height: 16),
             Text(

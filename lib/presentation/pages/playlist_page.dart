@@ -68,7 +68,7 @@ class PlaylistPage extends ConsumerWidget {
           Icon(
             Icons.playlist_play_outlined,
             size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -410,7 +410,7 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.music_off, size: 64, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                  Icon(Icons.music_off, size: 64, color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
                   const SizedBox(height: 16),
                   Text('播放列表为空', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
@@ -419,23 +419,23 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
               ),
             )
           : ReorderableListView.builder(
-                                  // 虚拟化优化：使用 builder 版本
-                                  itemCount: _playlist.trackIds.length,
-                                  onReorderItem: (oldIndex, newIndex) async {
-                                    if (oldIndex < newIndex) newIndex--;
-                                    await service.moveTrack(_playlist.id, oldIndex, newIndex);
-                                    setState(() {
-                                      _playlist = _playlist.moveTrack(oldIndex, newIndex);
-                                    });
-                                  },
-                                  itemBuilder: (context, index) => _buildTrackTile(
-                                    context,
-                                    ref,
-                                    service,
-                                    _playlist.trackIds[index],
-                                    index,
-                                  ),
-                                ),
+                                            // 虚拟化优化：使用 builder 版本
+                                            itemCount: _playlist.trackIds.length,
+                                            onReorder: (oldIndex, newIndex) async {
+                                              if (oldIndex < newIndex) newIndex--;
+                                              await service.moveTrack(_playlist.id, oldIndex, newIndex);
+                                              setState(() {
+                                                _playlist = _playlist.moveTrack(oldIndex, newIndex);
+                                              });
+                                            },
+                                            itemBuilder: (context, index) => _buildTrackTile(
+                                              context,
+                                              ref,
+                                              service,
+                                              _playlist.trackIds[index],
+                                              index,
+                                            ),
+                                          ),
     );
   }
 
