@@ -19,12 +19,9 @@ class WindowManagerService {
 
   Future<void> initialize() async {
     if (_initialized || kIsWeb) return;
-
-    // 初始化 window_manager
     await windowManager.ensureInitialized();
 
-    // 窗口选项
-    WindowOptions windowOptions = WindowOptions(
+    final windowOptions = WindowOptions(
       minimumSize: const Size(900, 600),
       maximumSize: Size.infinite,
       center: true,
@@ -45,25 +42,22 @@ class WindowManagerService {
     windowManager.addListener(_WindowListener(_ref));
 
     if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-          doWhenWindowReady(() {
-            appWindow.minSize = const Size(900, 600);
-            appWindow.maxSize = const Size(10000, 10000);
-            appWindow.alignment = Alignment.center;
-            appWindow.title = 'Q-Audio';
-            appWindow.show();
-          });
-        }
+      doWhenWindowReady(() {
+        appWindow.minSize = const Size(900, 600);
+        appWindow.maxSize = const Size(10000, 10000);
+        appWindow.alignment = Alignment.center;
+        appWindow.title = 'Q-Audio';
+        appWindow.show();
+      });
+    }
 
     _initialized = true;
   }
 
-  void setMinimizeToTray(bool value) {
-    _minimizeToTray = value;
-  }
+  void setMinimizeToTray(bool value) => _minimizeToTray = value;
 
   Future<void> minimize() async {
     if (!_initialized || kIsWeb) return;
-
     if (_minimizeToTray) {
       await windowManager.hide();
     } else {
@@ -73,7 +67,6 @@ class WindowManagerService {
 
   Future<void> close() async {
     if (!_initialized || kIsWeb) return;
-
     if (_minimizeToTray) {
       await windowManager.hide();
     } else {
@@ -111,18 +104,14 @@ class WindowManagerService {
     if (!_initialized || kIsWeb) return const WindowState();
 
     final bounds = await windowManager.getBounds();
-    final isMaximized = await windowManager.isMaximized();
-    final isMinimized = await windowManager.isMinimized();
-    final isFullScreen = await windowManager.isFullScreen();
-
     return WindowState(
       left: bounds.left,
       top: bounds.top,
       width: bounds.width,
       height: bounds.height,
-      isMaximized: isMaximized,
-      isMinimized: isMinimized,
-      isFullScreen: isFullScreen,
+      isMaximized: await windowManager.isMaximized(),
+      isMinimized: await windowManager.isMinimized(),
+      isFullScreen: await windowManager.isFullScreen(),
     );
   }
 
@@ -153,15 +142,15 @@ class WindowManagerService {
   Future<void> setAutoStart(bool enabled) async {
     if (!Platform.isWindows) return;
 
-    final appName = 'Q-Audio';
+    const appName = 'Q-Audio';
     final executablePath = Platform.resolvedExecutable;
-
     final hKey = calloc<HKEY>();
-    final subKey = 'Software\\Microsoft\\Windows\\CurrentVersion\\Run'.toNativeUtf16();
+    final subKey =
+        'Software\\Microsoft\\Windows\\CurrentVersion\\Run'.toNativeUtf16();
 
     try {
       final result = RegOpenKeyEx(HKEY_CURRENT_USER, subKey, 0, KEY_WRITE, hKey);
-      if (result != ERROR_SUCCESS) {
+      if (result != WIN32_ERROR.ERROR_SUCCESS) {
         throw Exception('Failed to open registry key: $result');
       }
 
@@ -175,12 +164,13 @@ class WindowManagerService {
           valueData.cast<Uint8>(),
           (executablePath.length + 1) * 2,
         );
-        if (result != ERROR_SUCCESS) {
+        if (result != WIN32_ERROR.ERROR_SUCCESS) {
           throw Exception('Failed to set auto-start: $result');
         }
       } else {
         final result = RegDeleteValue(hKey.value, appName.toNativeUtf16());
-        if (result != ERROR_SUCCESS && result != ERROR_FILE_NOT_FOUND) {
+        if (result != WIN32_ERROR.ERROR_SUCCESS &&
+            result != WIN32_ERROR.ERROR_FILE_NOT_FOUND) {
           throw Exception('Failed to remove auto-start: $result');
         }
       }
