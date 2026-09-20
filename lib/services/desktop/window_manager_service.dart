@@ -26,7 +26,7 @@ class WindowManagerService {
     // 窗口选项
     WindowOptions windowOptions = WindowOptions(
       minimumSize: const Size(900, 600),
-      maximumSize: Size.infinite,
+      maximumSize: const Size(10000, 10000),
       center: true,
       title: 'Q-Audio',
       titleBarStyle: TitleBarStyle.hidden,
@@ -160,30 +160,37 @@ class WindowManagerService {
     final subKey = 'Software\\Microsoft\\Windows\\CurrentVersion\\Run'.toNativeUtf16();
 
     try {
-      final result = RegOpenKeyEx(HKEY_CURRENT_USER, subKey, 0, KEY_WRITE, hKey);
-      if (result != ERROR_SUCCESS) {
-        throw Exception('Failed to open registry key: $result');
-      }
+          final result = RegOpenKeyEx(
+            HKEY_CURRENT_USER,
+            subKey,
+            0,
+            REG_SAM_FLAGS.KEY_WRITE,
+            hKey,
+          );
+          if (result != WIN32_ERROR.ERROR_SUCCESS) {
+            throw Exception('Failed to open registry key: $result');
+          }
 
-      if (enabled) {
-        final valueData = executablePath.toNativeUtf16();
-        final result = RegSetValueEx(
-          hKey.value,
-          appName.toNativeUtf16(),
-          0,
-          REG_SZ,
-          valueData.cast<Uint8>(),
-          (executablePath.length + 1) * 2,
-        );
-        if (result != ERROR_SUCCESS) {
-          throw Exception('Failed to set auto-start: $result');
-        }
-      } else {
-        final result = RegDeleteValue(hKey.value, appName.toNativeUtf16());
-        if (result != ERROR_SUCCESS && result != ERROR_FILE_NOT_FOUND) {
-          throw Exception('Failed to remove auto-start: $result');
-        }
-      }
+          if (enabled) {
+            final valueData = executablePath.toNativeUtf16();
+            final result = RegSetValueEx(
+              hKey.value,
+              appName.toNativeUtf16(),
+              0,
+              REG_VALUE_TYPE.REG_SZ,
+              valueData.cast<Uint8>(),
+              (executablePath.length + 1) * 2,
+            );
+            if (result != WIN32_ERROR.ERROR_SUCCESS) {
+              throw Exception('Failed to set auto-start: $result');
+            }
+          } else {
+            final result = RegDeleteValue(hKey.value, appName.toNativeUtf16());
+            if (result != WIN32_ERROR.ERROR_SUCCESS &&
+                result != WIN32_ERROR.ERROR_FILE_NOT_FOUND) {
+              throw Exception('Failed to remove auto-start: $result');
+            }
+          }
     } finally {
       RegCloseKey(hKey.value);
       free(hKey);
