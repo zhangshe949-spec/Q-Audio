@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap rescap">
+
+  <Identity Name="QAudio.QAudio" Version="0.1.0.0" Publisher="CN=QAudio" ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Q-Audio</DisplayName>
+    <PublisherDisplayName>QAudio</PublisherDisplayName>
+    <Logo>app_icon.ico</Logo>
+    <Description>Q-Audio — 音乐聚合播放器</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22621.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="zh-CN" />
+    <Resource Language="en-US" />
+  </Resources>
+
+  <Applications>
+    <Application Id="QAudio" Executable="q_audio.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="Q-Audio" Square150x150Logo="app_icon.ico" Square44x44Logo="app_icon.ico" Description="Q-Audio — 音乐聚合播放器" BackgroundColor="#6750A4">
+        <uap:DefaultTile Wide310x150Logo="app_icon.ico" Square310x310Logo="app_icon.ico" Square71x71Logo="app_icon.ico" />
+        <uap:SplashScreen Image="app_icon.ico" BackgroundColor="#6750A4" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="q_audio_audio">
+            <uap:DisplayName>音频文件</uap:DisplayName>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.mp3</uap:FileType>
+              <uap:FileType>.flac</uap:FileType>
+              <uap:FileType>.m4a</uap:FileType>
+              <uap:FileType>.ogg</uap:FileType>
+              <uap:FileType>.wav</uap:FileType>
+              <uap:FileType>.ape</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="qaudio" />
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <Capability Name="musicLibrary" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+
+</Package>

@@ -1,0 +1,28 @@
+name: Q-Audio
+description: Q-Audio — 音乐聚合播放器
+version: 0.1.0+1
+publisher: 'CN=QAudio'
+msix_version: 0.1.0.0
+logo: windows/runner/resources/app_icon.ico
+display_name: Q-Audio
+publisher_display_name: QAudio
+identity_name: QAudio.QAudio
+arch: x64
+min_version: '10.0.19041.0'
+capabilities:
+  - internetClient
+  - musicLibrary
+  - runFullTrust
+file_type_associations:
+  - name: q_audio_audio
+    display_name: 音频文件
+    file_types:
+      - .mp3
+      - .flac
+      - .m4a
+      - .ogg
+      - .wav
+      - .ape
+protocol:
+  name: qaudio
+output_dir: build/msix
