@@ -18,6 +18,9 @@ jobs:
     name: Windows MSIX
     runs-on: windows-latest
     timeout-minutes: 30
+    defaults:
+      run:
+        shell: powershell
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,10 +31,11 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
 
-      - name: Install MSIX tooling
+      - name: Install WiX Toolset
         run: |
           choco install -y wixtoolset
-          refreshenv
+          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          echo "WIX_PATH=$env:PATH" >> $env:GITHUB_ENV
 
       - name: Get dependencies
         working-directory: ./app
@@ -82,7 +86,9 @@ jobs:
           channel: stable
 
       - name: Install create-dmg
-        run: brew install create-dmg
+        run: |
+          brew install create-dmg
+          echo "$(brew --prefix)/bin" >> $GITHUB_PATH
 
       - name: Get dependencies
         working-directory: ./app
@@ -153,15 +159,19 @@ jobs:
             libgtk-3-dev liblzma-dev libstdc++6 \
             libglib2.0-dev libblkid-dev libgudev-1.0-dev \
             fuse libfuse2 patchelf desktop-file-utils \
-            appstream-util
+            appstream-util file
 
-      - name: Install linuxdeploy + appimagetool
+      - name: Install linuxdeploy & appimagetool
         run: |
-          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-gtk/releases/download/continuous/linuxdeploy-plugin-gtk-x86_64.AppImage
-          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          set -e
+          cd /tmp
+          wget -q "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-gtk/releases/download/continuous/linuxdeploy-plugin-gtk-x86_64.AppImage"
+          wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
           chmod +x *.AppImage
           sudo mv *.AppImage /usr/local/bin/
+          linuxdeploy --version
+          appimagetool --version
 
       - name: Get dependencies
         working-directory: ./app
