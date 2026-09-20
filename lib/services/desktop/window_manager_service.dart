@@ -149,7 +149,13 @@ class WindowManagerService {
         'Software\\Microsoft\\Windows\\CurrentVersion\\Run'.toNativeUtf16();
 
     try {
-      final result = RegOpenKeyEx(HKEY_CURRENT_USER, subKey, 0, KEY_WRITE, hKey);
+      final result = RegOpenKeyEx(
+        HKEY_CURRENT_USER,
+        subKey,
+        0,
+        REG_SAM_FLAGS.KEY_WRITE,
+        hKey,
+      );
       if (result != WIN32_ERROR.ERROR_SUCCESS) {
         throw Exception('Failed to open registry key: $result');
       }
@@ -160,7 +166,7 @@ class WindowManagerService {
           hKey.value,
           appName.toNativeUtf16(),
           0,
-          REG_SZ,
+          REG_VALUE_TYPE.REG_SZ,
           valueData.cast<Uint8>(),
           (executablePath.length + 1) * 2,
         );
