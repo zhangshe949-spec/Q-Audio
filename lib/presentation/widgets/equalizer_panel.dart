@@ -70,8 +70,8 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: DropdownButtonFormField<String>(
-                                                  value: currentPresetId,
-                                                  decoration: const InputDecoration(
+                                                              value: currentPresetId,
+                                                              decoration: const InputDecoration(
                 labelText: '预设',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),

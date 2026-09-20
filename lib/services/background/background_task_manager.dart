@@ -453,8 +453,8 @@ class BackgroundTasks {
 
 // 内部任务实现
 class _ScanTask extends CancellableTask {
-  _ScanTask({required String id, required TaskPriority priority, required this.scanner})
-      : super(id: id, priority: priority, description: '扫描任务: $id');
+  _ScanTask({required super.id, required super.priority, required this.scanner})
+      : super(description: '扫描任务: $id');
 
   final Future<void> Function() scanner;
 
@@ -466,8 +466,8 @@ class _ScanTask extends CancellableTask {
 }
 
 class _DownloadTask extends CancellableTask {
-  _DownloadTask({required String id, required TaskPriority priority, required this.downloader})
-      : super(id: id, priority: priority, description: '下载任务: $id');
+  _DownloadTask({required super.id, required super.priority, required this.downloader})
+      : super(description: '下载任务: $id');
 
   final Future<void> Function() downloader;
 
@@ -479,8 +479,8 @@ class _DownloadTask extends CancellableTask {
 }
 
 class _CacheCleanupTask extends CancellableTask {
-  _CacheCleanupTask({required String id, required TaskPriority priority, required this.cleaner})
-      : super(id: id, priority: priority, description: '缓存清理: $id');
+  _CacheCleanupTask({required super.id, required super.priority, required this.cleaner})
+      : super(description: '缓存清理: $id');
 
   final Future<void> Function() cleaner;
 
@@ -493,11 +493,11 @@ class _CacheCleanupTask extends CancellableTask {
 
 class _GenericTask extends CancellableTask {
   _GenericTask({
-    required String id,
-    required TaskPriority priority,
+    required super.id,
+    required super.priority,
     required this.action,
     String? description,
-  }) : super(id: id, priority: priority, description: description ?? '通用任务: $id');
+  }) : super(description: description ?? '通用任务: $id');
 
   final Future<void> Function() action;
 

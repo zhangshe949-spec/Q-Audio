@@ -147,8 +147,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       )
                     : ListView.builder(
                         // 虚拟化优化
-                        cacheExtent: 500.0,
-                        itemCount: _results.length,
+                        cacheExtent: 500.0, itemCount: _results.length,
                         itemBuilder: (context, index) {
                           final track = _results[index];
                           return ListTile(

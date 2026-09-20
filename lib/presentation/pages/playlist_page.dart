@@ -47,8 +47,7 @@ class PlaylistPage extends ConsumerWidget {
 
           return ListView.separated(
                                 // 虚拟化优化
-                                cacheExtent: 500.0,
-                                itemCount: playlists.length,
+                                cacheExtent: 500.0, itemCount: playlists.length,
                                 separatorBuilder: (_, __) => const Divider(height: 1),
                                 itemBuilder: (context, index) {
               final playlist = playlists[index];

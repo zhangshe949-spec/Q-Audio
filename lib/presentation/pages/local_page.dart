@@ -103,8 +103,7 @@ class LocalPage extends ConsumerWidget {
                 }
                 return ListView.separated(
                                   // 虚拟化优化：scrollCacheExtent 预加载可见区域外的项
-                                  cacheExtent: 500.0,
-                                  itemCount: tracks.length,
+                                  cacheExtent: 500.0, itemCount: tracks.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final track = tracks[index];
@@ -432,9 +431,7 @@ class LocalPage extends ConsumerWidget {
                         ),
                       )
                     : ListView.separated(
-                                            controller: scrollController,
-                                            // 虚拟化优化
-                                            cacheExtent: 500.0,
+                                            cacheExtent: 500.0, controller: scrollController,
                                             itemCount: directories.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),
                         itemBuilder: (context, index) {
