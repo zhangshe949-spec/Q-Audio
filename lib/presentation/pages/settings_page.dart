@@ -850,7 +850,7 @@ class _CacheSection extends ConsumerWidget {
     );
   }
 
-  void _exportData(BuildContext context, WidgetRef ref) async {
+  Future<void> _exportData(BuildContext context, WidgetRef ref) async {
         final navigator = Navigator.of(context);
         final scaffoldMessenger = ScaffoldMessenger.of(context);
 
@@ -867,57 +867,67 @@ class _CacheSection extends ConsumerWidget {
         try {
           final exportService = ref.read(dataExportImportServiceProvider);
           final file = await exportService.exportAll();
+
+          if (!context.mounted) return;
+
           navigator.pop();
           scaffoldMessenger.showSnackBar(
             SnackBar(content: Text('数据已导出到: ${file.path}')),
           );
         } catch (e) {
+          if (!context.mounted) return;
+
           navigator.pop();
           scaffoldMessenger.showSnackBar(
             SnackBar(content: Text('导出失败: $e')),
           );
         }
       }
+            }
 
-      void _importData(BuildContext context, WidgetRef ref) async {
-            final navigator = Navigator.of(context);
-            final scaffoldMessenger = ScaffoldMessenger.of(context);
+            Future<void> _importData(BuildContext context, WidgetRef ref) async {
+              final navigator = Navigator.of(context);
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-            final result = await FilePicker.platform.pickFiles(
-              type: FileType.custom,
-              allowedExtensions: ['json'],
-              dialogTitle: '选择导入文件',
-            );
+              final result = await FilePicker.platform.pickFiles(
+                type: FileType.custom,
+                allowedExtensions: ['json'],
+                dialogTitle: '选择导入文件',
+              );
 
-            if (result == null || result.files.isEmpty) return;
+              if (!context.mounted || result == null || result.files.isEmpty) return;
 
-            final file = File(result.files.single.path!);
+              final file = File(result.files.single.path!);
 
-            navigator.push(
-          DialogRoute(
-            context: context,
-            builder: (context) => const AlertDialog(
-              title: Text('导入数据'),
-              content: Text('正在导入...'),
-            ),
-          ),
-        );
+              navigator.push(
+                DialogRoute(
+                  context: context,
+                  builder: (context) => const AlertDialog(
+                    title: Text('导入数据'),
+                    content: Text('正在导入...'),
+                  ),
+                ),
+              );
 
-        try {
-          final importService = ref.read(dataExportImportServiceProvider);
-          await importService.importAll(file);
-          navigator.pop();
-          scaffoldMessenger.showSnackBar(
-            const SnackBar(content: Text('数据导入成功，重启应用生效')),
-          );
-        } catch (e) {
-          navigator.pop();
-          scaffoldMessenger.showSnackBar(
-            SnackBar(content: Text('导入失败: $e')),
-          );
-        }
-      }
-  }
+              try {
+                final importService = ref.read(dataExportImportServiceProvider);
+                await importService.importAll(file);
+
+                if (!context.mounted) return;
+
+                navigator.pop();
+                scaffoldMessenger.showSnackBar(
+                  const SnackBar(content: Text('数据导入成功，重启应用生效')),
+                );
+              } catch (e) {
+                if (!context.mounted) return;
+
+                navigator.pop();
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(content: Text('导入失败: $e')),
+                );
+              }
+            }
 
 /// 关于
 class _AboutSection extends ConsumerWidget {
