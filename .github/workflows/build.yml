@@ -46,23 +46,23 @@ jobs:
           candle -? 2>&1 | head -5
 
       - name: Get dependencies
-        working-directory: ./app
+        working-directory: app
         run: flutter pub get
 
       - name: Analyze
-        working-directory: ./app
+        working-directory: app
         run: flutter analyze --no-pub
 
       - name: Run tests
-        working-directory: ./app
+        working-directory: app
         run: flutter test --no-pub
 
       - name: Build Windows Release
-        working-directory: ./app
+        working-directory: app
         run: flutter build windows --release --no-pub
 
       - name: Create MSIX
-        working-directory: ./app
+        working-directory: app
         run: flutter pub run msix:create --verbose
 
       - name: Upload MSIX artifact
@@ -100,23 +100,23 @@ jobs:
           which create-dmg
 
       - name: Get dependencies
-        working-directory: ./app
+        working-directory: app
         run: flutter pub get
 
       - name: Analyze
-        working-directory: ./app
+        working-directory: app
         run: flutter analyze --no-pub
 
       - name: Run tests
-        working-directory: ./app
+        working-directory: app
         run: flutter test --no-pub
 
       - name: Build macOS Release
-        working-directory: ./app
+        working-directory: app
         run: flutter build macos --release --no-pub
 
       - name: Create DMG
-        working-directory: ./app
+        working-directory: app
         run: |
           APP_NAME="Q-Audio"
           APP_PATH="build/macos/Build/Products/Release/$APP_NAME.app"
@@ -188,23 +188,23 @@ jobs:
           appimagetool --version
 
       - name: Get dependencies
-        working-directory: ./app
+        working-directory: app
         run: flutter pub get
 
       - name: Analyze
-        working-directory: ./app
+        working-directory: app
         run: flutter analyze --no-pub
 
       - name: Run tests
-        working-directory: ./app
+        working-directory: app
         run: flutter test --no-pub
 
       - name: Build Linux Release
-        working-directory: ./app
+        working-directory: app
         run: flutter build linux --release --no-pub
 
       - name: Create AppImage
-        working-directory: ./app
+        working-directory: app
         run: |
           chmod +x scripts/build_appimage.sh
           ./scripts/build_appimage.sh
