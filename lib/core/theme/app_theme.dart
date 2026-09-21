@@ -40,11 +40,11 @@ class AppThemes {
         foregroundColor: Colors.black,
         elevation: 0,
       ),
-      cardTheme: CardThemeData(
-                                color: AppColors.lightSurface,
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
+      cardTheme: CardTheme(
+        color: AppColors.lightSurface,
+        elevation: 1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: AppColors.lightSurface,
         selectedIconTheme: const IconThemeData(color: AppColors.lightPrimary),
@@ -77,11 +77,11 @@ class AppThemes {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      cardTheme: CardThemeData(
-                                color: const Color(0xFF2A2A2A),
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
+      cardTheme: CardTheme(
+        color: const Color(0xFF2A2A2A),
+        elevation: 1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: AppColors.darkSurface,
         selectedIconTheme: const IconThemeData(color: AppColors.darkPrimary),
