@@ -184,15 +184,20 @@ jobs:
 
       - name: Install linuxdeploy & appimagetool
         run: |
-          set -e
+          set -euo pipefail
           cd /tmp
-          wget -q "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-          wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-gtk/releases/download/continuous/linuxdeploy-plugin-gtk-x86_64.AppImage"
-          wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+          echo "Downloading linuxdeploy..."
+          wget -q --show-progress --tries=3 --timeout=30 "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage" || (echo "Failed to download linuxdeploy" && exit 1)
+          echo "Downloading linuxdeploy-plugin-gtk..."
+          wget -q --show-progress --tries=3 --timeout=30 "https://github.com/linuxdeploy/linuxdeploy-plugin-gtk/releases/download/continuous/linuxdeploy-plugin-gtk-x86_64.AppImage" || (echo "Failed to download linuxdeploy-plugin-gtk" && exit 1)
+          echo "Downloading appimagetool..."
+          wget -q --show-progress --tries=3 --timeout=30 "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" || (echo "Failed to download appimagetool" && exit 1)
           chmod +x *.AppImage
+          echo "Installing to /usr/local/bin..."
           sudo mv *.AppImage /usr/local/bin/
-          linuxdeploy --version
-          appimagetool --version
+          echo "Verifying installations..."
+          which linuxdeploy && linuxdeploy --version
+          which appimagetool && appimagetool --version
 
       - name: Get dependencies
         run: flutter pub get

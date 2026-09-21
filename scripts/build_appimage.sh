@@ -10,6 +10,9 @@ APPIMAGE_DIR="AppDir"
 OUTPUT_NAME="${APP_NAME}-${1:-$(git describe --tags --always 2>/dev/null || echo 'dev')}-linux-x64.AppImage"
 
 echo "=== Building AppImage for $APP_NAME ==="
+echo "Build directory: $BUILD_DIR"
+echo "AppImage directory: $APPIMAGE_DIR"
+echo "Output name: $OUTPUT_NAME"
 
 # Clean previous build
 rm -rf "$APPIMAGE_DIR"
@@ -17,6 +20,13 @@ mkdir -p "$APPIMAGE_DIR/usr/bin"
 mkdir -p "$APPIMAGE_DIR/usr/share/applications"
 mkdir -p "$APPIMAGE_DIR/usr/share/icons/hicolor/256x256/apps"
 mkdir -p "$APPIMAGE_DIR/usr/share/metainfo"
+
+# Verify build directory exists
+if [ ! -d "$BUILD_DIR" ]; then
+  echo "ERROR: Build directory $BUILD_DIR does not exist!"
+  echo "Run 'flutter build linux --release' first."
+  exit 1
+fi
 
 # Copy built bundle
 echo "Copying bundle..."
@@ -26,6 +36,11 @@ cp -r "$BUILD_DIR"/* "$APPIMAGE_DIR/usr/bin/"
 EXECUTABLE=$(find "$APPIMAGE_DIR/usr/bin" -maxdepth 1 -type f -executable -name "$APP_NAME" | head -1)
 if [ -z "$EXECUTABLE" ]; then
   EXECUTABLE=$(find "$APPIMAGE_DIR/usr/bin" -maxdepth 1 -type f -executable | head -1)
+fi
+if [ -z "$EXECUTABLE" ]; then
+  echo "ERROR: No executable found in $APPIMAGE_DIR/usr/bin"
+  ls -la "$APPIMAGE_DIR/usr/bin"
+  exit 1
 fi
 echo "Found executable: $EXECUTABLE"
 
@@ -86,13 +101,13 @@ cat > "$APPIMAGE_DIR/usr/share/metainfo/${APP_NAME}.metainfo.xml" << EOF
     </ul>
   </description>
   <project_license>MIT</project_license>
-  <url type="homepage">https://github.com/yourusername/q-audio</url>
-  <url type="bugtracker">https://github.com/yourusername/q-audio/issues</url>
+  <url type="homepage">https://github.com/zhangshe949-spec/Q-Audio</url>
+  <url type="bugtracker">https://github.com/zhangshe949-spec/Q-Audio/issues</url>
   <provides>
     <binary>q_audio</binary>
   </provides>
   <screenshots>
-    <screenshot type="default">https://raw.githubusercontent.com/yourusername/q-audio/main/assets/screenshot.png</screenshot>
+    <screenshot type="default">https://raw.githubusercontent.com/zhangshe949-spec/Q-Audio/main/assets/screenshot.png</screenshot>
   </screenshots>
   <releases>
     <release version="${1:-dev}" date="$(date +%Y-%m-%d)"/>
@@ -102,6 +117,7 @@ EOF
 
 # Build AppImage
 echo "Running linuxdeploy..."
+which linuxdeploy
 linuxdeploy --appdir "$APPIMAGE_DIR" --plugin gtk --output appimage
 
 # Rename output
