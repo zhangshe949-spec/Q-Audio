@@ -12,8 +12,9 @@ env:
 jobs:
   test-lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -29,7 +30,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -39,7 +40,7 @@ jobs:
       - name: Build Windows MSIX
         shell: pwsh
         run: ./ci/windows_msix.ps1
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: Windows-MSIX
           path: build/windows/msix/*.msix
@@ -49,7 +50,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -59,7 +60,7 @@ jobs:
       - run: flutter build macos --release
       - run: chmod +x ci/macos_dmg.sh
       - run: ./ci/macos_dmg.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: macOS-DMG
           path: build/macos/dmg/*.dmg
