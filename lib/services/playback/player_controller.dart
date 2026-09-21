@@ -83,10 +83,10 @@ class FakeAudioEngine implements AudioEngine {
   double _volume = 1.0;
 
   @override
-    Future<Duration?> load(String url, {String? audioFilter}) {
-      duration = const Duration(minutes: 3);
-      return Future.value(duration);
-    }
+  Future<Duration?> load(String url, {String? audioFilter}) {
+    duration = const Duration(minutes: 3);
+    return Future.value(duration);
+  }
 
   @override
   Future<void> play() => Future.value(null);
@@ -113,12 +113,12 @@ class FakeAudioEngine implements AudioEngine {
 
   /// Test hook: emits progress as if the media were playing.
   void tick(Duration elapsed) {
-      if (!_positions.isClosed) _positions.add(elapsed);
-    }
-
-    @override
-    double get volume => _volume;
+    if (!_positions.isClosed) _positions.add(elapsed);
   }
+
+  @override
+  double get volume => _volume;
+}
 
 /// Owns engine lifecycle and exposes playback state to widgets.
 /// The engine is resolved from the provider graph; errors land in state,
@@ -186,74 +186,62 @@ class PlayerController extends Notifier<PlaybackState> {
     }
   }
 
-  Future<void> next() {
-      final queue = _queue;
-      final index = _currentIndex;
-      if (queue == null || index == null) return Future.value(null);
+  Future<void> next() async {
+    final queue = _queue;
+    final index = _currentIndex;
+    if (queue == null || index == null) return;
 
-      int nextIndex;
-      if (state.shuffleMode && _shuffleOrder != null) {
-        final nextPos = (_shufflePosition ?? 0) + 1;
-        if (nextPos < _shuffleOrder!.length) {
-          _shufflePosition = nextPos;
-          nextIndex = _shuffleOrder![nextPos];
-        } else if (state.repeatMode) {
-          _shufflePosition = 0;
-          nextIndex = _shuffleOrder!.first;
-        } else {
-          state = state.copyWith(status: PlaybackStatus.paused);
-          return Future.value(null);
-        }
+    int nextIndex;
+    if (state.shuffleMode && _shuffleOrder != null) {
+      final nextPos = (_shufflePosition ?? 0) + 1;
+      if (nextPos < _shuffleOrder!.length) {
+        _shufflePosition = nextPos;
+        nextIndex = _shuffleOrder![nextPos];
+      } else if (state.repeatMode) {
+        _shufflePosition = 0;
+        nextIndex = _shuffleOrder!.first;
       } else {
-        nextIndex = index + 1;
-        if (nextIndex >= queue.length) {
-          if (state.repeatMode) {
-            nextIndex = 0;
-          } else {
-            state = state.copyWith(status: PlaybackStatus.paused);
-            return Future.value(null);
-          }
-        }
+        // Clamp at last index instead of pausing
+        _shufflePosition = _shuffleOrder!.length - 1;
+        nextIndex = _shuffleOrder!.last;
       }
-      return playAt(nextIndex);
+    } else {
+      nextIndex = (index + 1).clamp(0, queue.length - 1);
     }
+    return playAt(nextIndex);
+  }
 
-    Future<void> previous() {
-      final queue = _queue;
-      final index = _currentIndex;
-      if (queue == null || index == null) return Future.value(null);
+  Future<void> previous() async {
+    final queue = _queue;
+    final index = _currentIndex;
+    if (queue == null || index == null) return;
 
-      int prevIndex;
-      if (state.shuffleMode && _shuffleOrder != null) {
-        final prevPos = (_shufflePosition ?? 0) - 1;
-        if (prevPos >= 0) {
-          _shufflePosition = prevPos;
-          prevIndex = _shuffleOrder![prevPos];
-        } else if (state.repeatMode) {
-          _shufflePosition = _shuffleOrder!.length - 1;
-          prevIndex = _shuffleOrder!.last;
-        } else {
-          return Future.value(null);
-        }
+    int prevIndex;
+    if (state.shuffleMode && _shuffleOrder != null) {
+      final prevPos = (_shufflePosition ?? 0) - 1;
+      if (prevPos >= 0) {
+        _shufflePosition = prevPos;
+        prevIndex = _shuffleOrder![prevPos];
+      } else if (state.repeatMode) {
+        _shufflePosition = _shuffleOrder!.length - 1;
+        prevIndex = _shuffleOrder!.last;
       } else {
-        prevIndex = index - 1;
-        if (prevIndex < 0) {
-          if (state.repeatMode) {
-            prevIndex = queue.length - 1;
-          } else {
-            return Future.value(null);
-          }
-        }
+        // Clamp at first index instead of pausing
+        _shufflePosition = 0;
+        prevIndex = _shuffleOrder!.first;
       }
-      return playAt(prevIndex);
+    } else {
+      prevIndex = (index - 1).clamp(0, queue.length - 1);
     }
+    return playAt(prevIndex);
+  }
 
   Future<void> play(Track track, String url) async {
     final generation = ++_playGeneration;
     try {
       await _positionSub?.cancel();
-            _positionSub?.cancel(); // fire-and-forget; broadcast stream cancel is sync
-            final engine = ref.read(audioEngineProvider);
+      _positionSub?.cancel(); // fire-and-forget; broadcast stream cancel is sync
+      final engine = ref.read(audioEngineProvider);
       _engine = engine;
 
       String? filter;
@@ -345,13 +333,39 @@ class PlayerController extends Notifier<PlaybackState> {
   }
 
   Future<void> _autoNext() async {
-    final queue = _queue;
-    final index = _currentIndex;
-    if (queue == null || index == null) return;
-    // Defer to microtask to avoid deadlock: play() awaits _positionSub?.cancel()
-    // which waits for this listener to finish.
-    await Future.microtask(() => next());
-  }
+      final queue = _queue;
+      final index = _currentIndex;
+      if (queue == null || index == null) return;
+
+      int nextIndex;
+      if (state.shuffleMode && _shuffleOrder != null) {
+        final nextPos = (_shufflePosition ?? 0) + 1;
+        if (nextPos < _shuffleOrder!.length) {
+          _shufflePosition = nextPos;
+          nextIndex = _shuffleOrder![nextPos];
+        } else if (state.repeatMode) {
+          _shufflePosition = 0;
+          nextIndex = _shuffleOrder!.first;
+        } else {
+          // At end of queue: pause
+          state = state.copyWith(status: PlaybackStatus.paused);
+          return;
+        }
+      } else {
+        if (index + 1 >= queue.length) {
+          if (state.repeatMode) {
+            nextIndex = 0;
+          } else {
+            // At end of queue: pause
+            state = state.copyWith(status: PlaybackStatus.paused);
+            return;
+          }
+        } else {
+          nextIndex = index + 1;
+        }
+      }
+      return playAt(nextIndex);
+    }
 
   Future<void> pause() async {
     await _engine?.pause();
