@@ -32,18 +32,31 @@ jobs:
           channel: stable
 
       - name: Install WiX Toolset
+        shell: pwsh
         run: |
-          choco install -y wixtoolset
-          $wixPath = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
-          if (Test-Path $wixPath) {
-            $env:PATH += ";$wixPath"
-            echo "Added WiX to PATH"
-          } else {
-            Write-Warning "WiX path not found at $wixPath"
-            Get-ChildItem "C:\Program Files*" -Filter "WiX*" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+          choco install wixtoolset --no-progress -y
+
+          $wixBin = "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin"
+          if (-not (Test-Path (Join-Path $wixBin "candle.exe"))) {
+            $wixBin = Get-ChildItem `
+              "${env:ProgramFiles(x86)}", "${env:ProgramFiles}" `
+              -Directory `
+              -Filter "WiX Toolset*" `
+              -ErrorAction SilentlyContinue |
+              ForEach-Object { Join-Path $_.FullName "bin" } |
+              Where-Object { Test-Path (Join-Path $_ "candle.exe") } |
+              Select-Object -First 1
           }
-          # Verify candle.exe
-          candle -? 2>&1 | head -5
+
+          if (-not $wixBin) {
+            throw "WiX Toolset not found"
+          }
+
+          # 关键：写入 GITHUB_PATH，后续步骤才可用
+          $wixBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+          & (Join-Path $wixBin "candle.exe") -?
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Get dependencies
         run: flutter pub get
@@ -58,7 +71,11 @@ jobs:
         run: flutter build windows --release --no-pub
 
       - name: Create MSIX
-        run: flutter pub run msix:create --verbose
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          Get-Command candle.exe | Out-String | Write-Host
+          dart run msix:create --verbose
 
       - name: Upload MSIX artifact
         uses: actions/upload-artifact@v4
