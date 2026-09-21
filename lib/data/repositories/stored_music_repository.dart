@@ -51,29 +51,28 @@ class StoredMusicRepository implements MusicRepository {
   }
 
   Future<void> _store(Iterable<Track> tracks) => storage.write(
-    storageKey,
-    jsonEncode({
-      'version': 1,
-      'tracks': tracks.map((t) => t.toJson()).toList(),
-    }),
-  );
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'tracks': tracks.map((t) => t.toJson()).toList(),
+        }),
+      );
 
   @override
   Future<void> save(Track track) => _serial(() async {
-    final records = {for (final t in await _load()) t.key: t};
-    records[track.key] = track;
-    if (records.length > maxTracks) {
-      throw StateError('Catalog capacity exceeded.');
-    }
-    await _store(records.values);
-  });
+        final records = {for (final t in await _load()) t.key: t};
+        records[track.key] = track;
+        if (records.length > maxTracks) {
+          throw StateError('Catalog capacity exceeded.');
+        }
+        await _store(records.values);
+      });
 
   @override
   Future<Track?> findById({required String sourceId, required String id}) =>
       _serial(
-        () async =>
-            InMemoryMusicRepository(initialTracks: await _load())
-                .findById(sourceId: sourceId, id: id),
+        () async => InMemoryMusicRepository(initialTracks: await _load())
+            .findById(sourceId: sourceId, id: id),
       );
 
   @override
@@ -91,14 +90,14 @@ class StoredMusicRepository implements MusicRepository {
     String? sourceId,
     int offset = 0,
     int limit = 50,
-  }) => _serial(
-    () async =>
-        InMemoryMusicRepository(initialTracks: await _load())
+  }) =>
+      _serial(
+        () async => InMemoryMusicRepository(initialTracks: await _load())
             .search(query, sourceId: sourceId, offset: offset, limit: limit),
-  );
+      );
 
   @override
   Future<void> clearAll() => _serial(() async {
-    await _store([]);
-  });
+        await _store([]);
+      });
 }

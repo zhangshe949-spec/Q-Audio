@@ -12,7 +12,8 @@ abstract interface class LyricsSource {
   Future<Lyrics?> fetchLyrics(Track track);
 
   /// 可选：搜索歌词（用于无法直接匹配时）
-  Future<List<Lyrics>> searchLyrics(String query, {int limit = 5}) async => const [];
+  Future<List<Lyrics>> searchLyrics(String query, {int limit = 5}) async =>
+      const [];
 }
 
 /// 网易云歌词源

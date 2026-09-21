@@ -48,6 +48,7 @@ class MusicSearchService {
     }
     return List.unmodifiable(_lastResults);
   }
+
   Future<String?> resolveUrl(Track track) async {
     final source = _sources.firstWhere(
       (s) => s.sourceId == track.sourceId,

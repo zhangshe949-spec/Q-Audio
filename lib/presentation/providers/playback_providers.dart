@@ -11,7 +11,9 @@ class AudioDevice {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AudioDevice && runtimeType == other.runtimeType && id == other.id;
+      other is AudioDevice &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;
@@ -52,7 +54,8 @@ class AudioDeviceNotifier extends StateNotifier<AudioDevice?> {
   }
 }
 
-final audioDeviceProvider = StateNotifierProvider<AudioDeviceNotifier, AudioDevice?>((ref) {
+final audioDeviceProvider =
+    StateNotifierProvider<AudioDeviceNotifier, AudioDevice?>((ref) {
   return AudioDeviceNotifier(ref);
 });
 
@@ -99,7 +102,8 @@ class CrossfadeNotifier extends StateNotifier<CrossfadeConfig> {
   }
 }
 
-final crossfadeProvider = StateNotifierProvider<CrossfadeNotifier, CrossfadeConfig>((ref) {
+final crossfadeProvider =
+    StateNotifierProvider<CrossfadeNotifier, CrossfadeConfig>((ref) {
   return CrossfadeNotifier(ref);
 });
 
@@ -123,7 +127,8 @@ class GaplessPlaybackNotifier extends StateNotifier<bool> {
   }
 }
 
-final gaplessPlaybackProvider = StateNotifierProvider<GaplessPlaybackNotifier, bool>((ref) {
+final gaplessPlaybackProvider =
+    StateNotifierProvider<GaplessPlaybackNotifier, bool>((ref) {
   return GaplessPlaybackNotifier(ref);
 });
 
@@ -171,7 +176,8 @@ class AutoPlayOnStartNotifier extends StateNotifier<bool> {
   }
 }
 
-final autoPlayOnStartProvider = StateNotifierProvider<AutoPlayOnStartNotifier, bool>((ref) {
+final autoPlayOnStartProvider =
+    StateNotifierProvider<AutoPlayOnStartNotifier, bool>((ref) {
   return AutoPlayOnStartNotifier(ref);
 });
 
@@ -195,6 +201,7 @@ class ResumePositionNotifier extends StateNotifier<bool> {
   }
 }
 
-final resumePositionProvider = StateNotifierProvider<ResumePositionNotifier, bool>((ref) {
+final resumePositionProvider =
+    StateNotifierProvider<ResumePositionNotifier, bool>((ref) {
   return ResumePositionNotifier(ref);
 });

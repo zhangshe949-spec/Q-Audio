@@ -7,7 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class EqualizerPreset {
   final String id;
   final String name;
-  final List<double> gains; // 10 bands: 31, 62, 125, 250, 500, 1k, 2k, 4k, 8k, 16k Hz
+  final List<double>
+      gains; // 10 bands: 31, 62, 125, 250, 500, 1k, 2k, 4k, 8k, 16k Hz
   final bool isCustom;
 
   const EqualizerPreset({
@@ -32,18 +33,20 @@ class EqualizerPreset {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'gains': gains,
-    'isCustom': isCustom,
-  };
+        'id': id,
+        'name': name,
+        'gains': gains,
+        'isCustom': isCustom,
+      };
 
-  factory EqualizerPreset.fromJson(Map<String, dynamic> json) => EqualizerPreset(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    gains: (json['gains'] as List).map((e) => (e as num).toDouble()).toList(),
-    isCustom: json['isCustom'] as bool? ?? false,
-  );
+  factory EqualizerPreset.fromJson(Map<String, dynamic> json) =>
+      EqualizerPreset(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        gains:
+            (json['gains'] as List).map((e) => (e as num).toDouble()).toList(),
+        isCustom: json['isCustom'] as bool? ?? false,
+      );
 
   /// 生成 FFmpeg 均衡器滤镜字符串
   String toFfmpegFilter() {
@@ -51,7 +54,8 @@ class EqualizerPreset {
     final parts = <String>[];
     for (int i = 0; i < gains.length; i++) {
       if (gains[i] != 0) {
-        parts.add('equalizer=f=${frequencies[i]}:width_type=o:width=1:g=${gains[i]}');
+        parts.add(
+            'equalizer=f=${frequencies[i]}:width_type=o:width=1:g=${gains[i]}');
       }
     }
     return parts.join(',');
@@ -142,7 +146,9 @@ class EqualizerService {
   List<double> get customGains {
     final json = _prefs.getString(_kCustomGainsKey);
     if (json == null) return List.filled(10, 0.0);
-    return (jsonDecode(json) as List).map((e) => (e as num).toDouble()).toList();
+    return (jsonDecode(json) as List)
+        .map((e) => (e as num).toDouble())
+        .toList();
   }
 
   /// 所有自定义预设
@@ -260,15 +266,18 @@ final equalizerServiceProvider = Provider<EqualizerService>((ref) {
   throw UnimplementedError('EqualizerService must be overridden in main.dart');
 });
 
-final equalizerEnabledProvider = StateNotifierProvider<EqualizerEnabledNotifier, bool>((ref) {
+final equalizerEnabledProvider =
+    StateNotifierProvider<EqualizerEnabledNotifier, bool>((ref) {
   return EqualizerEnabledNotifier(ref);
 });
 
-final equalizerCurrentPresetProvider = StateNotifierProvider<EqualizerPresetNotifier, String>((ref) {
+final equalizerCurrentPresetProvider =
+    StateNotifierProvider<EqualizerPresetNotifier, String>((ref) {
   return EqualizerPresetNotifier(ref);
 });
 
-final equalizerCustomGainsProvider = StateNotifierProvider<EqualizerGainsNotifier, List<double>>((ref) {
+final equalizerCustomGainsProvider =
+    StateNotifierProvider<EqualizerGainsNotifier, List<double>>((ref) {
   return EqualizerGainsNotifier(ref);
 });
 
@@ -316,7 +325,9 @@ class EqualizerPresetNotifier extends StateNotifier<String> {
     state = presetId;
     // 同步自定义增益
     if (presetId != 'custom') {
-      _ref.read(equalizerCustomGainsProvider.notifier).setGains(service.activeGains);
+      _ref
+          .read(equalizerCustomGainsProvider.notifier)
+          .setGains(service.activeGains);
     }
   }
 }

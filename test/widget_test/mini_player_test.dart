@@ -11,7 +11,8 @@ import '../test_app.dart';
 
 class ThrowingEngine implements AudioEngine {
   @override
-  Future<Duration?> load(String url, {String? audioFilter}) async => throw Exception('source broken');
+  Future<Duration?> load(String url, {String? audioFilter}) async =>
+      throw Exception('source broken');
   @override
   Future<void> play() async {}
   @override

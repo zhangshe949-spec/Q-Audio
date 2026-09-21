@@ -16,7 +16,8 @@ class LyricLine {
   final String? translation;
 
   @override
-  String toString() => '[${_format(time)}] $text${translation != null ? ' / $translation' : ''}';
+  String toString() =>
+      '[${_format(time)}] $text${translation != null ? ' / $translation' : ''}';
 
   static String _format(int ms) {
     final m = (ms ~/ 60000).toString().padLeft(2, '0');
@@ -65,7 +66,8 @@ class Lyrics {
   bool get hasTranslation => translatedLines.isNotEmpty;
 
   @override
-  String toString() => 'Lyrics(title: $title, lines: ${lines.length}, translated: ${translatedLines.length})';
+  String toString() =>
+      'Lyrics(title: $title, lines: ${lines.length}, translated: ${translatedLines.length})';
 }
 
 /// LRC 解析器
@@ -74,9 +76,10 @@ class LrcParser {
   static final _lineRegex = RegExp('$_timeTagRegex(?:$_timeTagRegex)*(.*)');
 
   /// 解析标准 LRC 文本
-  static Lyrics parse(String lrcText, {String? title, String? artist, String? album}) {
-      final lines = <LyricLine>[];
-      int? offset;
+  static Lyrics parse(String lrcText,
+      {String? title, String? artist, String? album}) {
+    final lines = <LyricLine>[];
+    int? offset;
 
     for (final rawLine in lrcText.split('\n')) {
       final line = rawLine.trim();
@@ -133,7 +136,8 @@ class LrcParser {
   }
 
   /// 解析翻译歌词（仅提取文本，复用主歌词的时间轴）
-  static List<LyricLine> parseTranslation(String tlrcText, List<LyricLine> mainLines) {
+  static List<LyricLine> parseTranslation(
+      String tlrcText, List<LyricLine> mainLines) {
     final translated = <LyricLine>[];
     final textByTime = <int, String>{};
 

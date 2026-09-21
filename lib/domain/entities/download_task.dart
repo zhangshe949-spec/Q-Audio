@@ -48,7 +48,8 @@ class DownloadTask {
 
   double get progress => totalBytes > 0 ? downloadedBytes / totalBytes : 0.0;
 
-  bool get isActive => status == DownloadStatus.downloading || status == DownloadStatus.pending;
+  bool get isActive =>
+      status == DownloadStatus.downloading || status == DownloadStatus.pending;
 
   DownloadTask copyWith({
     String? id,
@@ -87,40 +88,44 @@ class DownloadTask {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'url': url,
-    'filePath': filePath,
-    'title': title,
-    'artist': artist,
-    'album': album,
-    'artworkUrl': artworkUrl,
-    'totalBytes': totalBytes,
-    'downloadedBytes': downloadedBytes,
-    'status': status.index,
-    'error': error,
-    'createdAt': createdAt?.toIso8601String(),
-    'updatedAt': updatedAt?.toIso8601String(),
-    'mimeType': mimeType,
-    'metadata': metadata,
-  };
+        'id': id,
+        'url': url,
+        'filePath': filePath,
+        'title': title,
+        'artist': artist,
+        'album': album,
+        'artworkUrl': artworkUrl,
+        'totalBytes': totalBytes,
+        'downloadedBytes': downloadedBytes,
+        'status': status.index,
+        'error': error,
+        'createdAt': createdAt?.toIso8601String(),
+        'updatedAt': updatedAt?.toIso8601String(),
+        'mimeType': mimeType,
+        'metadata': metadata,
+      };
 
   factory DownloadTask.fromJson(Map<String, dynamic> json) => DownloadTask(
-    id: json['id'] as String,
-    url: json['url'] as String,
-    filePath: json['filePath'] as String,
-    title: json['title'] as String?,
-    artist: json['artist'] as String?,
-    album: json['album'] as String?,
-    artworkUrl: json['artworkUrl'] as String?,
-    totalBytes: json['totalBytes'] as int? ?? 0,
-    downloadedBytes: json['downloadedBytes'] as int? ?? 0,
-    status: DownloadStatus.values[json['status'] as int? ?? 0],
-    error: json['error'] as String?,
-    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : null,
-    updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
-    mimeType: json['mimeType'] as String?,
-    metadata: Map<String, dynamic>.from(json['metadata'] as Map? ?? {}),
-  );
+        id: json['id'] as String,
+        url: json['url'] as String,
+        filePath: json['filePath'] as String,
+        title: json['title'] as String?,
+        artist: json['artist'] as String?,
+        album: json['album'] as String?,
+        artworkUrl: json['artworkUrl'] as String?,
+        totalBytes: json['totalBytes'] as int? ?? 0,
+        downloadedBytes: json['downloadedBytes'] as int? ?? 0,
+        status: DownloadStatus.values[json['status'] as int? ?? 0],
+        error: json['error'] as String?,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'] as String)
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'] as String)
+            : null,
+        mimeType: json['mimeType'] as String?,
+        metadata: Map<String, dynamic>.from(json['metadata'] as Map? ?? {}),
+      );
 }
 
 /// 下载仓库接口

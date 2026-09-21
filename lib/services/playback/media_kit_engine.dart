@@ -57,7 +57,7 @@ class MediaKitAudioEngine implements AudioEngine {
       // Note: media_kit filter API varies by version; real-time filter
       // changes require recreating the player, so we apply on next load.
       await _player.open(Media(url));
-      
+
       // Wait a bit for the player to be ready and get duration
       await Future.delayed(const Duration(milliseconds: 200));
       _duration = _player.state.duration;

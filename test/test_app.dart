@@ -4,13 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:q_audio/main.dart';
 import 'package:q_audio/presentation/providers/catalog_providers.dart';
-import 'package:q_audio/presentation/providers/player_providers.dart' show PlaybackStatus;
+import 'package:q_audio/presentation/providers/player_providers.dart'
+    show PlaybackStatus;
 import 'package:q_audio/presentation/providers/theme_provider.dart';
 import 'package:q_audio/routes/app_router.dart';
 import 'package:q_audio/services/desktop/desktop_providers.dart'
-    show windowManagerServiceProvider, systemTrayServiceProvider,
-         mediaSessionServiceProvider, globalHotkeysServiceProvider,
-         desktopLyricsWindowProvider;
+    show
+        windowManagerServiceProvider,
+        systemTrayServiceProvider,
+        mediaSessionServiceProvider,
+        globalHotkeysServiceProvider,
+        desktopLyricsWindowProvider;
 import 'package:q_audio/services/desktop/window_manager_service.dart'
     show WindowManagerService, WindowState;
 import 'package:q_audio/services/desktop/system_tray_service.dart'
@@ -42,12 +46,12 @@ Future<GoRouter> mountApp(
   final preferences = await SharedPreferences.getInstance();
   final router = createAppRouter(initialLocation: location);
   addTearDown(() async {
-      await tester.pumpAndSettle();
-      await tester.pumpWidget(const SizedBox.shrink());
-      router.dispose();
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(const SizedBox.shrink());
+    router.dispose();
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -58,12 +62,17 @@ Future<GoRouter> mountApp(
         // Mock EqualizerService for tests
         equalizerServiceProvider.overrideWith((ref) => MockEqualizerService()),
         // Mock WindowManagerService for tests
-        windowManagerServiceProvider.overrideWith((ref) => MockWindowManagerService()),
+        windowManagerServiceProvider
+            .overrideWith((ref) => MockWindowManagerService()),
         // Mock other desktop services
-        systemTrayServiceProvider.overrideWith((ref) => MockSystemTrayService()),
-        mediaSessionServiceProvider.overrideWith((ref) => MockMediaSessionService()),
-        globalHotkeysServiceProvider.overrideWith((ref) => MockGlobalHotkeysService()),
-        desktopLyricsWindowProvider.overrideWith((ref) => MockDesktopLyricsWindowService()),
+        systemTrayServiceProvider
+            .overrideWith((ref) => MockSystemTrayService()),
+        mediaSessionServiceProvider
+            .overrideWith((ref) => MockMediaSessionService()),
+        globalHotkeysServiceProvider
+            .overrideWith((ref) => MockGlobalHotkeysService()),
+        desktopLyricsWindowProvider
+            .overrideWith((ref) => MockDesktopLyricsWindowService()),
         ...additionalOverrides,
       ],
       child: QAudioApp(router: router),
@@ -124,32 +133,58 @@ class MockWindowManagerService implements WindowManagerService {
 
 class MockSystemTrayService implements SystemTrayService {
   MockSystemTrayService();
-  @override Future<void> initialize() async {}
-  @override Future<void> updateToolTip(String tip) async {}
-  @override Future<void> dispose() async {}
+  @override
+  Future<void> initialize() async {}
+  @override
+  Future<void> updateToolTip(String tip) async {}
+  @override
+  Future<void> dispose() async {}
 }
 
 class MockMediaSessionService implements MediaSessionService {
   MockMediaSessionService();
-  @override Future<void> initialize() async {}
-  @override Future<void> syncMetadata({required String title, required String artist, String? album, String? artworkUrl, Duration? duration}) async {}
-  @override Future<void> syncPlaybackState({required PlaybackStatus status, required Duration position, Duration? duration, bool shuffleMode = false, bool repeatMode = false}) async {}
-  @override Future<void> dispose() async {}
+  @override
+  Future<void> initialize() async {}
+  @override
+  Future<void> syncMetadata(
+      {required String title,
+      required String artist,
+      String? album,
+      String? artworkUrl,
+      Duration? duration}) async {}
+  @override
+  Future<void> syncPlaybackState(
+      {required PlaybackStatus status,
+      required Duration position,
+      Duration? duration,
+      bool shuffleMode = false,
+      bool repeatMode = false}) async {}
+  @override
+  Future<void> dispose() async {}
 }
 
 class MockGlobalHotkeysService implements GlobalHotkeysService {
   MockGlobalHotkeysService();
-  @override Future<void> initialize() async {}
-  @override Future<void> registerCustomHotkey(String action, dynamic hotkey) async {}
-  @override Future<void> unregisterHotkey(dynamic hotkey) async {}
-  @override Future<void> dispose() async {}
+  @override
+  Future<void> initialize() async {}
+  @override
+  Future<void> registerCustomHotkey(String action, dynamic hotkey) async {}
+  @override
+  Future<void> unregisterHotkey(dynamic hotkey) async {}
+  @override
+  Future<void> dispose() async {}
 }
 
 class MockDesktopLyricsWindowService implements DesktopLyricsWindowService {
   MockDesktopLyricsWindowService();
-  @override Future<void> initialize() async {}
-  @override Future<void> show() async {}
-  @override Future<void> hide() async {}
-  @override Future<void> toggle() async {}
-  @override Future<void> dispose() async {}
+  @override
+  Future<void> initialize() async {}
+  @override
+  Future<void> show() async {}
+  @override
+  Future<void> hide() async {}
+  @override
+  Future<void> toggle() async {}
+  @override
+  Future<void> dispose() async {}
 }

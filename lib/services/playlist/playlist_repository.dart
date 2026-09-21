@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/entities/playlist.dart';
-import '../../../presentation/providers/catalog_providers.dart' show sharedPreferencesProvider;
+import '../../../presentation/providers/catalog_providers.dart'
+    show sharedPreferencesProvider;
 
 /// 基于 SharedPreferences 的播放列表仓库
 class SharedPreferencesPlaylistRepository implements PlaylistRepository {
@@ -24,7 +25,8 @@ class SharedPreferencesPlaylistRepository implements PlaylistRepository {
       final json = _prefs.getString(key);
       if (json != null) {
         try {
-          playlists.add(Playlist.fromJson(jsonDecode(json) as Map<String, dynamic>));
+          playlists
+              .add(Playlist.fromJson(jsonDecode(json) as Map<String, dynamic>));
         } catch (_) {
           // 忽略损坏条目
         }
@@ -32,8 +34,12 @@ class SharedPreferencesPlaylistRepository implements PlaylistRepository {
     }
     // 按更新时间倒序
     playlists.sort((a, b) {
-      final aTime = a.updatedAt?.millisecondsSinceEpoch ?? a.createdAt?.millisecondsSinceEpoch ?? 0;
-      final bTime = b.updatedAt?.millisecondsSinceEpoch ?? b.createdAt?.millisecondsSinceEpoch ?? 0;
+      final aTime = a.updatedAt?.millisecondsSinceEpoch ??
+          a.createdAt?.millisecondsSinceEpoch ??
+          0;
+      final bTime = b.updatedAt?.millisecondsSinceEpoch ??
+          b.createdAt?.millisecondsSinceEpoch ??
+          0;
       return bTime.compareTo(aTime);
     });
     return playlists;
@@ -85,7 +91,8 @@ final playlistRepositoryProvider = Provider<PlaylistRepository>((ref) {
   return SharedPreferencesPlaylistRepository(prefs);
 });
 
-final playlistRepositoryInstanceProvider = Provider<SharedPreferencesPlaylistRepository>((ref) {
+final playlistRepositoryInstanceProvider =
+    Provider<SharedPreferencesPlaylistRepository>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return SharedPreferencesPlaylistRepository(prefs);
 });

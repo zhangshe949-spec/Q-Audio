@@ -75,20 +75,28 @@ class DownloadPage extends ConsumerWidget {
           }
 
           // 分组：进行中、已完成、其他
-          final activeTasks = tasks.where((t) => 
-              t.status == DownloadStatus.downloading || 
-              t.status == DownloadStatus.pending).toList();
-          final completedTasks = tasks.where((t) => t.status == DownloadStatus.completed).toList();
-          final otherTasks = tasks.where((t) => 
-              t.status == DownloadStatus.paused || 
-              t.status == DownloadStatus.failed || 
-              t.status == DownloadStatus.cancelled).toList();
+          final activeTasks = tasks
+              .where((t) =>
+                  t.status == DownloadStatus.downloading ||
+                  t.status == DownloadStatus.pending)
+              .toList();
+          final completedTasks =
+              tasks.where((t) => t.status == DownloadStatus.completed).toList();
+          final otherTasks = tasks
+              .where((t) =>
+                  t.status == DownloadStatus.paused ||
+                  t.status == DownloadStatus.failed ||
+                  t.status == DownloadStatus.cancelled)
+              .toList();
 
           return ListView(
             children: [
-              if (activeTasks.isNotEmpty) _buildSection(context, '下载中', activeTasks, ref),
-              if (completedTasks.isNotEmpty) _buildSection(context, '已完成', completedTasks, ref),
-              if (otherTasks.isNotEmpty) _buildSection(context, '其他', otherTasks, ref),
+              if (activeTasks.isNotEmpty)
+                _buildSection(context, '下载中', activeTasks, ref),
+              if (completedTasks.isNotEmpty)
+                _buildSection(context, '已完成', completedTasks, ref),
+              if (otherTasks.isNotEmpty)
+                _buildSection(context, '其他', otherTasks, ref),
             ],
           );
         },
@@ -104,7 +112,8 @@ class DownloadPage extends ConsumerWidget {
           Icon(
             Icons.download_outlined,
             size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+            color:
+                Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -124,7 +133,8 @@ class DownloadPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, String title, List<DownloadTask> tasks, WidgetRef ref) {
+  Widget _buildSection(BuildContext context, String title,
+      List<DownloadTask> tasks, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -144,7 +154,8 @@ class DownloadPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildTaskTile(BuildContext context, WidgetRef ref, DownloadTask task) {
+  Widget _buildTaskTile(
+      BuildContext context, WidgetRef ref, DownloadTask task) {
     final service = ref.read(downloadServiceProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -162,7 +173,8 @@ class DownloadPage extends ConsumerWidget {
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text('删除下载任务'),
-                content: Text('确定要删除 "${task.title ?? task.filePath.split('/').last}" 吗？'),
+                content: Text(
+                    '确定要删除 "${task.title ?? task.filePath.split('/').last}" 吗？'),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
@@ -170,7 +182,8 @@ class DownloadPage extends ConsumerWidget {
                   ),
                   FilledButton(
                     onPressed: () => Navigator.pop(context, true),
-                    style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
+                    style: FilledButton.styleFrom(
+                        backgroundColor: colorScheme.error),
                     child: const Text('删除'),
                   ),
                 ],
@@ -207,7 +220,8 @@ class DownloadPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusIcon(BuildContext context, DownloadTask task, ColorScheme colorScheme) {
+  Widget _buildStatusIcon(
+      BuildContext context, DownloadTask task, ColorScheme colorScheme) {
     IconData icon;
     Color color;
 
@@ -241,7 +255,8 @@ class DownloadPage extends ConsumerWidget {
     return Icon(icon, size: 32, color: color);
   }
 
-  Widget _buildProgressBar(BuildContext context, DownloadTask task, ColorScheme colorScheme) {
+  Widget _buildProgressBar(
+      BuildContext context, DownloadTask task, ColorScheme colorScheme) {
     if (task.status == DownloadStatus.completed) {
       return Text(
         '已完成 · ${_formatBytes(task.totalBytes)}',
@@ -401,7 +416,8 @@ class DownloadPage extends ConsumerWidget {
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(context, true),
-                style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.error),
                 child: const Text('全部删除'),
               ),
             ],

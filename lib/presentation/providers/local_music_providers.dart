@@ -2,17 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/local_music/local_music_scanner.dart'
-    show
-        LocalMusicScanner,
-        ScanProgress,
-        ScanResult;
+    show LocalMusicScanner, ScanProgress, ScanResult;
 import 'catalog_providers.dart';
 
 // Re-export ScanResult for consumers
 export '../../services/local_music/local_music_scanner.dart' show ScanResult;
 
 /// 配置的扫描目录列表（持久化到 SharedPreferences）
-final scanDirectoriesProvider = StateNotifierProvider<ScanDirectoriesNotifier, List<String>>((ref) {
+final scanDirectoriesProvider =
+    StateNotifierProvider<ScanDirectoriesNotifier, List<String>>((ref) {
   return ScanDirectoriesNotifier(ref.watch(sharedPreferencesProvider));
 });
 
@@ -51,7 +49,8 @@ class ScanDirectoriesNotifier extends StateNotifier<List<String>> {
 final localMusicScannerProvider = Provider<LocalMusicScanner>((ref) {
   final repository = ref.watch(musicRepositoryProvider);
   final directories = ref.watch(scanDirectoriesProvider);
-  return LocalMusicScanner(repository: repository, scanDirectories: directories);
+  return LocalMusicScanner(
+      repository: repository, scanDirectories: directories);
 });
 
 /// 扫描进度流 Provider
@@ -70,7 +69,10 @@ class ScanIdle extends ScanState {
 }
 
 class ScanInProgress extends ScanState {
-  const ScanInProgress({required this.currentDir, required this.processedFiles, required this.foundTracks});
+  const ScanInProgress(
+      {required this.currentDir,
+      required this.processedFiles,
+      required this.foundTracks});
   final String currentDir;
   final int processedFiles;
   final int foundTracks;
@@ -92,6 +94,7 @@ class ScanStateNotifier extends StateNotifier<ScanState> {
 }
 
 /// 扫描状态 Provider
-final scanStateProvider = StateNotifierProvider<ScanStateNotifier, ScanState>((ref) {
+final scanStateProvider =
+    StateNotifierProvider<ScanStateNotifier, ScanState>((ref) {
   return ScanStateNotifier();
 });

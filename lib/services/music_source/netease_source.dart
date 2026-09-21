@@ -19,7 +19,7 @@ class NetEaseMusicSource implements MusicSource {
     'Referer': 'https://music.163.com/',
     'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-        '(KHTML, like Gecko) Chrome/120.0 Safari/537.36',
+            '(KHTML, like Gecko) Chrome/120.0 Safari/537.36',
   };
 
   @override
@@ -48,7 +48,8 @@ class NetEaseMusicSource implements MusicSource {
                 ? (artists.first as Map)['name']?.toString() ?? ''
                 : '';
             final album = song['album'];
-            final albumName = album is Map ? album['name']?.toString() ?? '' : '';
+            final albumName =
+                album is Map ? album['name']?.toString() ?? '' : '';
             return Track(
               id: id.toString(),
               sourceId: sourceId,

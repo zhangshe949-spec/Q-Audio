@@ -6,8 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/lyrics.dart';
 import '../../presentation/providers/catalog_providers.dart'
     show lyricsServiceProvider;
-import '../../presentation/providers/player_providers.dart'
-    show playerProvider;
+import '../../presentation/providers/player_providers.dart' show playerProvider;
 
 /// 歌词面板组件：同步高亮、自动滚动、点击跳转
 class LyricsPanel extends ConsumerStatefulWidget {
@@ -73,7 +72,8 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
           );
   }
 
-  Widget _buildPlaceholder(BuildContext context, {String message = '播放音乐以显示歌词'}) {
+  Widget _buildPlaceholder(BuildContext context,
+      {String message = '播放音乐以显示歌词'}) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -81,13 +81,17 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
           Icon(
             Icons.lyrics_outlined,
             size: 48,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+            color:
+                Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: 12),
           Text(
             message,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withOpacity(0.7),
                 ),
             textAlign: TextAlign.center,
           ),
@@ -104,7 +108,8 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
     );
   }
 
-  Widget _buildLyricsList(BuildContext context, Lyrics lyrics, int currentIndex) {
+  Widget _buildLyricsList(
+      BuildContext context, Lyrics lyrics, int currentIndex) {
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.bodyLarge?.copyWith(
           height: 1.6,
@@ -131,7 +136,9 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
       itemBuilder: (context, index) {
         final line = lyrics.lines[index];
         final isCurrent = index == currentIndex;
-        final translation = widget.showTranslation && lyrics.hasTranslation && index < lyrics.translatedLines.length
+        final translation = widget.showTranslation &&
+                lyrics.hasTranslation &&
+                index < lyrics.translatedLines.length
             ? lyrics.translatedLines[index].text
             : null;
 
@@ -163,7 +170,8 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
                   Text(
                     translation,
                     style: isCurrent
-                        ? translationStyle.copyWith(color: theme.colorScheme.primary.withOpacity(0.8))
+                        ? translationStyle.copyWith(
+                            color: theme.colorScheme.primary.withOpacity(0.8))
                         : translationStyle,
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -184,7 +192,9 @@ class _LyricsPanelState extends ConsumerState<LyricsPanel> {
 
     // 计算目标位置：让当前行居中
     final itemHeight = 56.0; // 估算行高
-    final targetOffset = (index * itemHeight) - (_scrollController.position.viewportDimension / 2) + (itemHeight / 2);
+    final targetOffset = (index * itemHeight) -
+        (_scrollController.position.viewportDimension / 2) +
+        (itemHeight / 2);
 
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -276,7 +286,10 @@ class LyricsPage extends ConsumerWidget {
             Icon(
               Icons.lyrics_outlined,
               size: 80,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant
+                  .withOpacity(0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -297,14 +310,20 @@ class LyricsPage extends ConsumerWidget {
             Text(
               '暂无可用歌词',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withOpacity(0.7),
                   ),
             ),
             const SizedBox(height: 16),
             Text(
               '尝试切换音乐源或手动搜索',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withOpacity(0.5),
                   ),
             ),
           ],

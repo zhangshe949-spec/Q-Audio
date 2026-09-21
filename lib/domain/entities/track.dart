@@ -17,9 +17,9 @@ class Track {
     this.filePath,
     this.fileSize,
     this.modifiedAt,
-  }) : id = id.trim(),
-       sourceId = sourceId.trim(),
-       title = title.trim() {
+  })  : id = id.trim(),
+        sourceId = sourceId.trim(),
+        title = title.trim() {
     if (this.id.isEmpty || this.sourceId.isEmpty || this.title.isEmpty) {
       throw ArgumentError('Track id, sourceId and title must not be empty.');
     }
@@ -49,23 +49,23 @@ class Track {
   (String, String) get key => (sourceId, id);
 
   Map<String, Object> toJson() => {
-    'id': id,
-    'sourceId': sourceId,
-    'title': title,
-    'artist': artist,
-    'album': album,
-    if (albumArtist != null) 'albumArtist': albumArtist!,
-    if (genre != null) 'genre': genre!,
-    if (year != null) 'year': year!,
-    if (trackNumber != null) 'trackNumber': trackNumber!,
-    if (discNumber != null) 'discNumber': discNumber!,
-    'durationMs': duration.inMilliseconds,
-    if (url != null) 'url': url!,
-    if (artworkUrl != null) 'artworkUrl': artworkUrl!,
-    if (filePath != null) 'filePath': filePath!,
-    if (fileSize != null) 'fileSize': fileSize!,
-    if (modifiedAt != null) 'modifiedAt': modifiedAt!.toIso8601String(),
-  };
+        'id': id,
+        'sourceId': sourceId,
+        'title': title,
+        'artist': artist,
+        'album': album,
+        if (albumArtist != null) 'albumArtist': albumArtist!,
+        if (genre != null) 'genre': genre!,
+        if (year != null) 'year': year!,
+        if (trackNumber != null) 'trackNumber': trackNumber!,
+        if (discNumber != null) 'discNumber': discNumber!,
+        'durationMs': duration.inMilliseconds,
+        if (url != null) 'url': url!,
+        if (artworkUrl != null) 'artworkUrl': artworkUrl!,
+        if (filePath != null) 'filePath': filePath!,
+        if (fileSize != null) 'fileSize': fileSize!,
+        if (modifiedAt != null) 'modifiedAt': modifiedAt!.toIso8601String(),
+      };
 
   factory Track.fromJson(Map<String, dynamic> json) {
     String text(String name, {bool required = false}) {

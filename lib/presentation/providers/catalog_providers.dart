@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/repositories/stored_music_repository.dart';
 import '../../domain/entities/track.dart';
 import '../../domain/repositories/music_repository.dart';
-import '../../presentation/providers/player_providers.dart' show playerProvider, PlaybackState;
+import '../../presentation/providers/player_providers.dart'
+    show playerProvider, PlaybackState;
 import '../../services/cache/artwork_cache_service.dart';
 import '../../services/music_source/music_search_service.dart';
 import '../../services/music_source/music_source.dart';
@@ -94,7 +95,8 @@ final downloadServiceProvider = Provider<DownloadService>((ref) {
 });
 
 /// 数据导出/导入服务 Provider（需 Ref，动态创建）
-final dataExportImportServiceProvider = Provider<DataExportImportService>((ref) {
+final dataExportImportServiceProvider =
+    Provider<DataExportImportService>((ref) {
   return DataExportImportService(ref);
 });
 

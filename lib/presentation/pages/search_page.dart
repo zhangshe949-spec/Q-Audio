@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../providers/catalog_providers.dart'
-    show musicSearchProvider;
-import '../../presentation/providers/player_providers.dart'
-    show playerProvider;
+import '../providers/catalog_providers.dart' show musicSearchProvider;
+import '../../presentation/providers/player_providers.dart' show playerProvider;
 import '../../domain/entities/track.dart';
 
 /// Real search page: searches all music sources in parallel.
@@ -151,8 +149,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         itemBuilder: (context, index) {
                           final track = _results[index];
                           return ListTile(
-                            key: Key(
-                                'search-${track.sourceId}-${track.id}'),
+                            key: Key('search-${track.sourceId}-${track.id}'),
                             leading: Icon(Icons.music_note,
                                 color: _getSourceColor(track.sourceId)),
                             title: Text(track.title),

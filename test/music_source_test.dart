@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:q_audio/domain/entities/track.dart';
@@ -47,7 +46,8 @@ void main() {
         }
       };
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final results = await source.search('test');
@@ -60,7 +60,8 @@ void main() {
     });
 
     test('search handles malformed response gracefully', () async {
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => {'result': {}});
 
       final results = await source.search('test');
@@ -68,7 +69,8 @@ void main() {
     });
 
     test('search handles network errors gracefully', () async {
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenThrow(Exception('Network error'));
 
       final results = await source.search('test');
@@ -82,7 +84,8 @@ void main() {
         ]
       };
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final track = Track(
@@ -102,7 +105,8 @@ void main() {
         ]
       };
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final track = Track(
@@ -151,7 +155,8 @@ void main() {
         }
       };
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final results = await source.search('test');
@@ -170,7 +175,8 @@ void main() {
         }
       };
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final track = Track(
@@ -215,7 +221,8 @@ void main() {
         ]
       };
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final results = await source.search('test');
@@ -228,11 +235,10 @@ void main() {
     });
 
     test('resolveUrl returns URL from response', () async {
-      final mockResponse = {
-        'url': 'https://kuwo.com/song.mp3'
-      };
+      final mockResponse = {'url': 'https://kuwo.com/song.mp3'};
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final track = Track(
@@ -246,7 +252,8 @@ void main() {
     });
 
     test('search handles network errors gracefully', () async {
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenThrow(Exception('Network error'));
 
       final results = await source.search('test');
@@ -275,32 +282,61 @@ void main() {
 
     test('search returns aggregated results', () async {
       final neResponse = {
-        'result': {'songs': [{'id': 1, 'name': 'NE Song', 'artists': [{'name': 'NE Artist'}], 'album': {'name': 'NE Album'}}]}
+        'result': {
+          'songs': [
+            {
+              'id': 1,
+              'name': 'NE Song',
+              'artists': [
+                {'name': 'NE Artist'}
+              ],
+              'album': {'name': 'NE Album'}
+            }
+          ]
+        }
       };
       final qqResponse = {
-        'data': {'songs': [{'songid': 2, 'songname': 'QQ Song', 'singer': [{'name': 'QQ Artist'}], 'album': {'name': 'QQ Album'}}]}
+        'data': {
+          'songs': [
+            {
+              'songid': 2,
+              'songname': 'QQ Song',
+              'singer': [
+                {'name': 'QQ Artist'}
+              ],
+              'album': {'name': 'QQ Album'}
+            }
+          ]
+        }
       };
       final kuwoResponse = {
-        'abslist': [{'SongId': 3, 'SongName': 'KW Song', 'Artist': 'KW Artist', 'Album': 'KW Album'}]
+        'abslist': [
+          {
+            'SongId': 3,
+            'SongName': 'KW Song',
+            'Artist': 'KW Artist',
+            'Album': 'KW Album'
+          }
+        ]
       };
 
       when(() => mockNetwork.getJson(
-        'https://music.163.com/api/search/suggest',
-        query: any(named: 'query'),
-        headers: any(named: 'headers'),
-      )).thenAnswer((_) async => neResponse);
+            'https://music.163.com/api/search/suggest',
+            query: any(named: 'query'),
+            headers: any(named: 'headers'),
+          )).thenAnswer((_) async => neResponse);
 
       when(() => mockNetwork.getJson(
-        'https://c.y.qq.com/soso/fcgi-bin/fcg_search_pc.fcg',
-        query: any(named: 'query'),
-        headers: any(named: 'headers'),
-      )).thenAnswer((_) async => qqResponse);
+            'https://c.y.qq.com/soso/fcgi-bin/fcg_search_pc.fcg',
+            query: any(named: 'query'),
+            headers: any(named: 'headers'),
+          )).thenAnswer((_) async => qqResponse);
 
       when(() => mockNetwork.getJson(
-        'http://www.kuwo.cn/api/getSearchList.aspx',
-        query: any(named: 'query'),
-        headers: any(named: 'headers'),
-      )).thenAnswer((_) async => kuwoResponse);
+            'http://www.kuwo.cn/api/getSearchList.aspx',
+            query: any(named: 'query'),
+            headers: any(named: 'headers'),
+          )).thenAnswer((_) async => kuwoResponse);
 
       final results = await service.search('test');
       expect(results.length, 3);
@@ -311,39 +347,59 @@ void main() {
       final neResponse = {
         'result': {
           'songs': [
-            {'id': 1, 'name': 'Song A', 'artists': [{'name': 'Artist'}], 'album': {'name': 'Album'}},
-            {'id': 1, 'name': 'Song A Dup', 'artists': [{'name': 'Artist'}], 'album': {'name': 'Album'}},
+            {
+              'id': 1,
+              'name': 'Song A',
+              'artists': [
+                {'name': 'Artist'}
+              ],
+              'album': {'name': 'Album'}
+            },
+            {
+              'id': 1,
+              'name': 'Song A Dup',
+              'artists': [
+                {'name': 'Artist'}
+              ],
+              'album': {'name': 'Album'}
+            },
           ]
         }
       };
 
       when(() => mockNetwork.getJson(
-        'https://music.163.com/api/search/suggest',
-        query: any(named: 'query'),
-        headers: any(named: 'headers'),
-      )).thenAnswer((_) async => neResponse);
+            'https://music.163.com/api/search/suggest',
+            query: any(named: 'query'),
+            headers: any(named: 'headers'),
+          )).thenAnswer((_) async => neResponse);
 
       when(() => mockNetwork.getJson(
-        'https://c.y.qq.com/soso/fcgi-bin/fcg_search_pc.fcg',
-        query: any(named: 'query'),
-        headers: any(named: 'headers'),
-      )).thenAnswer((_) async => {'data': {}});
+            'https://c.y.qq.com/soso/fcgi-bin/fcg_search_pc.fcg',
+            query: any(named: 'query'),
+            headers: any(named: 'headers'),
+          )).thenAnswer((_) async => {'data': {}});
 
       when(() => mockNetwork.getJson(
-        'http://www.kuwo.cn/api/getSearchList.aspx',
-        query: any(named: 'query'),
-        headers: any(named: 'headers'),
-      )).thenAnswer((_) async => {'abslist': []});
+            'http://www.kuwo.cn/api/getSearchList.aspx',
+            query: any(named: 'query'),
+            headers: any(named: 'headers'),
+          )).thenAnswer((_) async => {'abslist': []});
 
       final results = await service.search('test');
       expect(results.length, 1);
     });
 
     test('resolveUrl delegates to correct source', () async {
-      final track = Track(id: '123', sourceId: 'netease', title: 'Test', artist: 'Artist');
-      final mockResponse = {'data': [{'url': 'https://netease.com/track.mp3'}]};
+      final track = Track(
+          id: '123', sourceId: 'netease', title: 'Test', artist: 'Artist');
+      final mockResponse = {
+        'data': [
+          {'url': 'https://netease.com/track.mp3'}
+        ]
+      };
 
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final url = await service.resolveUrl(track);
@@ -354,9 +410,21 @@ void main() {
       service.watchResults();
 
       final mockResponse = {
-        'result': {'songs': [{'id': 1, 'name': 'Song', 'artists': [{'name': 'Artist'}], 'album': {'name': 'Album'}}]}
+        'result': {
+          'songs': [
+            {
+              'id': 1,
+              'name': 'Song',
+              'artists': [
+                {'name': 'Artist'}
+              ],
+              'album': {'name': 'Album'}
+            }
+          ]
+        }
       };
-      when(() => mockNetwork.getJson(any(), query: any(named: 'query'), headers: any(named: 'headers')))
+      when(() => mockNetwork.getJson(any(),
+              query: any(named: 'query'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final results = await service.search('test');

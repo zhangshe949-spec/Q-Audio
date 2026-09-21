@@ -13,8 +13,7 @@ void main() {
       location: '/local',
       initialValues: {
         'unrelated': 'preserve',
-        'q_audio.v1.catalog':
-            '{"version":1,"tracks":['
+        'q_audio.v1.catalog': '{"version":1,"tracks":['
             '{"id":"1","sourceId":"local","title":"晨光","artist":"Alice","album":"Dawn","durationMs":120000},'
             '{"id":"2","sourceId":"web","title":"夜航"}]}',
       },
@@ -33,7 +32,8 @@ void main() {
       tester,
       location: '/local',
       initialValues: {
-        'q_audio.v1.catalog': '{"version":1,"tracks":[{"id":"1","sourceId":"local","title":"晨光"}]}',
+        'q_audio.v1.catalog':
+            '{"version":1,"tracks":[{"id":"1","sourceId":"local","title":"晨光"}]}',
       },
     );
     expect(find.text('晨光'), findsOneWidget);
@@ -82,7 +82,8 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('corrupted stored theme falls back to default mode', (tester) async {
+  testWidgets('corrupted stored theme falls back to default mode',
+      (tester) async {
     await mountApp(
       tester,
       location: '/settings',

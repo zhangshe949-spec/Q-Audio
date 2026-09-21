@@ -51,26 +51,30 @@ class Playlist {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'description': description,
-    'coverUrl': coverUrl,
-    'trackIds': trackIds,
-    'createdAt': createdAt?.toIso8601String(),
-    'updatedAt': updatedAt?.toIso8601String(),
-    'metadata': metadata,
-  };
+        'id': id,
+        'name': name,
+        'description': description,
+        'coverUrl': coverUrl,
+        'trackIds': trackIds,
+        'createdAt': createdAt?.toIso8601String(),
+        'updatedAt': updatedAt?.toIso8601String(),
+        'metadata': metadata,
+      };
 
   factory Playlist.fromJson(Map<String, dynamic> json) => Playlist(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    description: json['description'] as String?,
-    coverUrl: json['coverUrl'] as String?,
-    trackIds: List<String>.from(json['trackIds'] as List? ?? []),
-    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : null,
-    updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
-    metadata: Map<String, dynamic>.from(json['metadata'] as Map? ?? {}),
-  );
+        id: json['id'] as String,
+        name: json['name'] as String,
+        description: json['description'] as String?,
+        coverUrl: json['coverUrl'] as String?,
+        trackIds: List<String>.from(json['trackIds'] as List? ?? []),
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'] as String)
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'] as String)
+            : null,
+        metadata: Map<String, dynamic>.from(json['metadata'] as Map? ?? {}),
+      );
 
   /// 从 Track 列表创建
   static String trackKey(Track track) => '${track.sourceId}:${track.id}';

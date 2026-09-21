@@ -94,16 +94,19 @@ class LocalPage extends ConsumerWidget {
               ),
               data: (tracks) {
                 // 目录为空且无扫描状态时，显示引导页
-                if (tracks.isEmpty && directories.isEmpty && scanState is! ScanInProgress) {
+                if (tracks.isEmpty &&
+                    directories.isEmpty &&
+                    scanState is! ScanInProgress) {
                   return _buildEmptyDirectoryGuide(context, ref);
                 }
                 // 有目录但无曲目时，显示空列表提示
                 if (tracks.isEmpty) {
-                  return _buildEmptyTracksView(context, ref, directories.isNotEmpty);
+                  return _buildEmptyTracksView(
+                      context, ref, directories.isNotEmpty);
                 }
                 return ListView.separated(
-                                  // 虚拟化优化：scrollCacheExtent 预加载可见区域外的项
-                                  cacheExtent: 500.0, itemCount: tracks.length,
+                  // 虚拟化优化：scrollCacheExtent 预加载可见区域外的项
+                  cacheExtent: 500.0, itemCount: tracks.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final track = tracks[index];
@@ -149,7 +152,8 @@ class LocalPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildScanStatusBar(BuildContext context, WidgetRef ref, ScanState scanState) {
+  Widget _buildScanStatusBar(
+      BuildContext context, WidgetRef ref, ScanState scanState) {
     if (scanState is ScanInProgress) {
       return _buildScanProgressBar(context, ref, scanState);
     } else if (scanState is ScanDone) {
@@ -160,7 +164,8 @@ class LocalPage extends ConsumerWidget {
     return const SizedBox.shrink();
   }
 
-  Widget _buildScanProgressBar(BuildContext context, WidgetRef ref, ScanInProgress state) {
+  Widget _buildScanProgressBar(
+      BuildContext context, WidgetRef ref, ScanInProgress state) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Container(
@@ -180,13 +185,15 @@ class LocalPage extends ConsumerWidget {
               Expanded(
                 child: Text(
                   '正在扫描：${state.currentDir}',
-                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer),
+                  style: textTheme.bodyMedium
+                      ?.copyWith(color: colorScheme.onPrimaryContainer),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(
                 '${state.foundTracks} 首',
-                style: textTheme.bodySmall?.copyWith(color: colorScheme.onPrimaryContainer),
+                style: textTheme.bodySmall
+                    ?.copyWith(color: colorScheme.onPrimaryContainer),
               ),
             ],
           ),
@@ -200,14 +207,16 @@ class LocalPage extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => _cancelScan(ref),
-            child: Text('取消', style: TextStyle(color: colorScheme.onPrimaryContainer)),
+            child: Text('取消',
+                style: TextStyle(color: colorScheme.onPrimaryContainer)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildScanDoneBanner(BuildContext context, WidgetRef ref, ScanResult result) {
+  Widget _buildScanDoneBanner(
+      BuildContext context, WidgetRef ref, ScanResult result) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Container(
@@ -220,19 +229,22 @@ class LocalPage extends ConsumerWidget {
           Expanded(
             child: Text(
               '扫描完成：${result.totalFiles} 个文件，新增 ${result.newTracks} 首，耗时 ${result.duration.inSeconds}s',
-              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onTertiaryContainer),
+              style: textTheme.bodyMedium
+                  ?.copyWith(color: colorScheme.onTertiaryContainer),
             ),
           ),
           TextButton(
             onPressed: () => _resetScanState(ref),
-            child: Text('关闭', style: TextStyle(color: colorScheme.onTertiaryContainer)),
+            child: Text('关闭',
+                style: TextStyle(color: colorScheme.onTertiaryContainer)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildScanErrorBanner(BuildContext context, WidgetRef ref, String error) {
+  Widget _buildScanErrorBanner(
+      BuildContext context, WidgetRef ref, String error) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Container(
@@ -245,12 +257,14 @@ class LocalPage extends ConsumerWidget {
           Expanded(
             child: Text(
               '扫描失败：$error',
-              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onErrorContainer),
+              style: textTheme.bodyMedium
+                  ?.copyWith(color: colorScheme.onErrorContainer),
             ),
           ),
           TextButton(
             onPressed: () => _resetScanState(ref),
-            child: Text('关闭', style: TextStyle(color: colorScheme.onErrorContainer)),
+            child: Text('关闭',
+                style: TextStyle(color: colorScheme.onErrorContainer)),
           ),
         ],
       ),
@@ -297,7 +311,8 @@ class LocalPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyTracksView(BuildContext context, WidgetRef ref, bool hasDirectories) {
+  Widget _buildEmptyTracksView(
+      BuildContext context, WidgetRef ref, bool hasDirectories) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -307,7 +322,10 @@ class LocalPage extends ConsumerWidget {
             Icon(
               Icons.music_off,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant
+                  .withOpacity(0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -317,9 +335,7 @@ class LocalPage extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              hasDirectories
-                  ? '尝试点击右上角菜单执行扫描，或检查目录是否包含支持的音频格式'
-                  : '请先添加扫描目录',
+              hasDirectories ? '尝试点击右上角菜单执行扫描，或检查目录是否包含支持的音频格式' : '请先添加扫描目录',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -414,7 +430,8 @@ class LocalPage extends ConsumerWidget {
                     IconButton(
                       icon: const Icon(Icons.add),
                       tooltip: '添加目录',
-                      onPressed: () => _pickDirectory(context, notifier, setState),
+                      onPressed: () =>
+                          _pickDirectory(context, notifier, setState),
                     ),
                   ],
                 ),
@@ -425,14 +442,18 @@ class LocalPage extends ConsumerWidget {
                     ? Center(
                         child: Text(
                           '暂无配置目录',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
                         ),
                       )
                     : ListView.separated(
-                                            cacheExtent: 500.0, controller: scrollController,
-                                            itemCount: directories.length,
+                        cacheExtent: 500.0,
+                        controller: scrollController,
+                        itemCount: directories.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),
                         itemBuilder: (context, index) {
                           final dir = directories[index];

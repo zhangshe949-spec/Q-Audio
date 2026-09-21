@@ -19,7 +19,8 @@ class ScanStarted extends ScanProgress {
 }
 
 class ScanDirectory extends ScanProgress {
-  const ScanDirectory({required this.path, required this.index, required this.total});
+  const ScanDirectory(
+      {required this.path, required this.index, required this.total});
   final String path;
   final int index;
   final int total;
@@ -38,7 +39,10 @@ class ScanError extends ScanProgress {
 }
 
 class ScanCompleted extends ScanProgress {
-  const ScanCompleted({required this.totalFiles, required this.newTracks, required this.duration});
+  const ScanCompleted(
+      {required this.totalFiles,
+      required this.newTracks,
+      required this.duration});
   final int totalFiles;
   final int newTracks;
   final Duration duration;
@@ -50,8 +54,8 @@ class LocalMusicScanner {
     required MusicRepository repository,
     required List<String> scanDirectories,
     this.extensions = const ['.mp3', '.flac', '.m4a', '.ogg', '.wav', '.ape'],
-  }) : _repository = repository,
-       _scanDirectories = scanDirectories;
+  })  : _repository = repository,
+        _scanDirectories = scanDirectories;
 
   final MusicRepository _repository;
   final List<String> _scanDirectories;
@@ -111,12 +115,14 @@ class LocalMusicScanner {
       final allFiles = <File>[];
       final directories = _collectDirectories(_scanDirectories);
 
-      _progressController.add(ScanStarted(totalDirectories: directories.length));
+      _progressController
+          .add(ScanStarted(totalDirectories: directories.length));
 
       for (var i = 0; i < directories.length; i++) {
         if (_cancelled || _currentTask?.isCancelled == true) break;
         final dir = directories[i];
-        _progressController.add(ScanDirectory(path: dir.path, index: i, total: directories.length));
+        _progressController.add(
+            ScanDirectory(path: dir.path, index: i, total: directories.length));
 
         final files = await _collectAudioFiles(dir);
         allFiles.addAll(files);
@@ -128,7 +134,8 @@ class LocalMusicScanner {
         try {
           final track = await _extractMetadata(file);
           if (track != null) {
-            final exists = await _repository.findById(sourceId: 'local', id: track.id);
+            final exists =
+                await _repository.findById(sourceId: 'local', id: track.id);
             if (exists == null) {
               await _repository.save(track);
               newTracks++;
@@ -301,5 +308,6 @@ class ScanResult {
   final bool skipped;
 
   @override
-  String toString() => 'ScanResult(files: $totalFiles, new: $newTracks, ${duration.inSeconds}s, skipped: $skipped)';
+  String toString() =>
+      'ScanResult(files: $totalFiles, new: $newTracks, ${duration.inSeconds}s, skipped: $skipped)';
 }

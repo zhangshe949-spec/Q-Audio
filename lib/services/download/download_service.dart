@@ -38,8 +38,12 @@ class DownloadService {
       int counter = 1;
       String newPath;
       do {
-        final ext = fileName.contains('.') ? fileName.substring(fileName.lastIndexOf('.')) : '';
-        final base = fileName.contains('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
+        final ext = fileName.contains('.')
+            ? fileName.substring(fileName.lastIndexOf('.'))
+            : '';
+        final base = fileName.contains('.')
+            ? fileName.substring(0, fileName.lastIndexOf('.'))
+            : fileName;
         newPath = '${dir.path}/${base}_$counter$ext';
         counter++;
       } while (await File(newPath).exists());
@@ -92,7 +96,8 @@ class DownloadService {
     final task = await _repository.getById(id);
     if (task == null) return;
 
-    if (task.status == DownloadStatus.paused || task.status == DownloadStatus.failed) {
+    if (task.status == DownloadStatus.paused ||
+        task.status == DownloadStatus.failed) {
       await _repository.save(task.copyWith(status: DownloadStatus.pending));
       _scheduleDownload(task);
     }
@@ -106,7 +111,7 @@ class DownloadService {
     }
     // 从后台任务管理器取消
     BackgroundTaskManager.instance.cancel('download_$id');
-    
+
     final task = await _repository.getById(id);
     if (task != null) {
       await _repository.save(task.copyWith(status: DownloadStatus.cancelled));
@@ -144,7 +149,8 @@ class DownloadService {
 
   /// 调度下载（并发控制 + 任务队列）
   void _scheduleDownload(DownloadTask task) {
-    final runningCount = _activeDownloads.values.where((c) => c.isRunning).length;
+    final runningCount =
+        _activeDownloads.values.where((c) => c.isRunning).length;
     if (runningCount >= _concurrency) {
       // 队列中等待，状态保持 pending
       return;
@@ -181,12 +187,14 @@ class DownloadService {
   }
 
   void _checkQueue() {
-    final runningCount = _activeDownloads.values.where((c) => c.isRunning).length;
+    final runningCount =
+        _activeDownloads.values.where((c) => c.isRunning).length;
     if (runningCount < _concurrency) {
       // 尝试启动下一个 pending 任务
       _repository.getAll().then((tasks) {
         for (final task in tasks) {
-          if (task.status == DownloadStatus.pending && !_activeDownloads.containsKey(task.id)) {
+          if (task.status == DownloadStatus.pending &&
+              !_activeDownloads.containsKey(task.id)) {
             _startDownload(task);
             break;
           }

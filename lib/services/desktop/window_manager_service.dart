@@ -32,7 +32,8 @@ class WindowManagerService {
       skipTaskbar: false,
     );
 
-    if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    if (!kIsWeb &&
+        (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       await windowManager.waitUntilReadyToShow(windowOptions, () async {
         await windowManager.show();
         await windowManager.focus();
@@ -41,7 +42,8 @@ class WindowManagerService {
 
     windowManager.addListener(_WindowListener(_ref));
 
-    if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    if (!kIsWeb &&
+        (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       doWhenWindowReady(() {
         appWindow.minSize = const Size(900, 600);
         appWindow.maxSize = const Size(10000, 10000);
@@ -145,8 +147,8 @@ class WindowManagerService {
     const appName = 'Q-Audio';
     final executablePath = Platform.resolvedExecutable;
     final hKey = calloc<HKEY>();
-    final subKey =
-        'Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run'.toNativeUtf16();
+    final subKey = 'Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run'
+        .toNativeUtf16();
 
     try {
       final result = RegOpenKeyEx(

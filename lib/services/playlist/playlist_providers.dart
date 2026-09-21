@@ -4,11 +4,6 @@ export 'playlist_repository.dart'
         playlistRepositoryProvider,
         playlistRepositoryInstanceProvider;
 
-export 'playlist_service.dart'
-    show
-        PlaylistService,
-        playlistServiceProvider;
+export 'playlist_service.dart' show PlaylistService, playlistServiceProvider;
 
-export '../../domain/entities/playlist.dart'
-    show
-        Playlist;
+export '../../domain/entities/playlist.dart' show Playlist;

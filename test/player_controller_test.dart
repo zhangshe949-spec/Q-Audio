@@ -11,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Fake engine for tests.
 class TestAudioEngine implements AudioEngine {
-  final StreamController<Duration> _positions = StreamController<Duration>.broadcast();
+  final StreamController<Duration> _positions =
+      StreamController<Duration>.broadcast();
   Duration? _presetDuration;
   double _volume = 1.0;
   int loadCallCount = 0;
@@ -98,7 +99,10 @@ void main() {
 
     test('setQueue + playAt sets track and plays', () async {
       final notifier = container.read(playerProvider.notifier);
-      final tracks = [_track('1', url: 'https://a.test/1'), _track('2', url: 'https://a.test/2')];
+      final tracks = [
+        _track('1', url: 'https://a.test/1'),
+        _track('2', url: 'https://a.test/2')
+      ];
 
       notifier.setQueue(tracks);
       await notifier.playAt(1);
@@ -162,7 +166,8 @@ void main() {
     });
 
     test('auto-advance when reaching duration', () async {
-      final shortEngine = TestAudioEngine()..setPresetDuration(const Duration(seconds: 10));
+      final shortEngine = TestAudioEngine()
+        ..setPresetDuration(const Duration(seconds: 10));
       final testContainer = await createTestContainer(shortEngine);
       final notifier = testContainer.read(playerProvider.notifier);
       final tracks = [

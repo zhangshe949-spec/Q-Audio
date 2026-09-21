@@ -49,16 +49,17 @@ class PlaybackState {
     bool? repeatMode,
     double? volume,
     bool clearError = false,
-  }) => PlaybackState(
-    track: track ?? this.track,
-    status: status ?? this.status,
-    position: position ?? this.position,
-    duration: duration ?? this.duration,
-    error: clearError ? null : (error ?? this.error),
-    shuffleMode: shuffleMode ?? this.shuffleMode,
-    repeatMode: repeatMode ?? this.repeatMode,
-    volume: volume ?? this.volume,
-  );
+  }) =>
+      PlaybackState(
+        track: track ?? this.track,
+        status: status ?? this.status,
+        position: position ?? this.position,
+        duration: duration ?? this.duration,
+        error: clearError ? null : (error ?? this.error),
+        shuffleMode: shuffleMode ?? this.shuffleMode,
+        repeatMode: repeatMode ?? this.repeatMode,
+        volume: volume ?? this.volume,
+      );
 }
 
 /// Platform media engines stay behind this interface; UI never touches them.
@@ -130,7 +131,8 @@ class PlayerController extends Notifier<PlaybackState> {
   int? _currentIndex;
   List<int>? _shuffleOrder;
   int? _shufflePosition;
-  int _playGeneration = 0; // Incremented on each play() call to detect stale continuations
+  int _playGeneration =
+      0; // Incremented on each play() call to detect stale continuations
 
   @override
   PlaybackState build() => const PlaybackState();
@@ -270,7 +272,8 @@ class PlayerController extends Notifier<PlaybackState> {
         volume: state.volume,
       );
 
-      final duration = await engine.load(url, audioFilter: filter) ?? Duration.zero;
+      final duration =
+          await engine.load(url, audioFilter: filter) ?? Duration.zero;
 
       if (generation != _playGeneration) {
         return;

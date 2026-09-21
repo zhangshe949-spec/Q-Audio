@@ -100,18 +100,23 @@ class _PlayerPageState extends ConsumerState<PlayerPage>
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 32),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: TabBar(
                           indicatorSize: TabBarIndicatorSize.tab,
                           dividerColor: Colors.transparent,
                           indicator: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          labelColor: Theme.of(context).colorScheme.onPrimaryContainer,
-                          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                          labelColor:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          unselectedLabelColor:
+                              Theme.of(context).colorScheme.onSurfaceVariant,
                           tabs: const [
                             Tab(icon: Icon(Icons.album_rounded), text: '封面'),
                             Tab(icon: Icon(Icons.lyrics_rounded), text: '歌词'),
@@ -138,13 +143,19 @@ class _PlayerPageState extends ConsumerState<PlayerPage>
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          Theme.of(context).colorScheme.primaryContainer,
-                                          Theme.of(context).colorScheme.secondaryContainer,
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .secondaryContainer,
                                         ],
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Theme.of(context).colorScheme.primary
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
                                               .withOpacity(0.3),
                                           blurRadius: 30,
                                           spreadRadius: 5,
@@ -154,9 +165,9 @@ class _PlayerPageState extends ConsumerState<PlayerPage>
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
                                       child: CachedArtwork(
-                                                                              url: track?.artworkUrl ?? '',
-                                                                              fit: BoxFit.cover,
-                                                                            ),
+                                        url: track?.artworkUrl ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -226,9 +237,8 @@ class _PlayerPageState extends ConsumerState<PlayerPage>
                         overlayRadius: 16,
                       ),
                       activeTrackColor: Theme.of(context).colorScheme.primary,
-                      inactiveTrackColor: Theme.of(context)
-                          .colorScheme
-                          .surfaceContainerHighest,
+                      inactiveTrackColor:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       thumbColor: Theme.of(context).colorScheme.primary,
                     ),
                     child: Slider(
@@ -489,7 +499,9 @@ class _PlayerPageState extends ConsumerState<PlayerPage>
                             Icons.music_note_rounded,
                             color: isCurrent
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurfaceVariant,
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                           ),
                     title: Text(
                       track.title,

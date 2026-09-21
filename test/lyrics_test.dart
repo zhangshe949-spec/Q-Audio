@@ -57,7 +57,8 @@ void main() {
     test('linesAround returns context around current line', () {
       final around = lyrics.linesAround(7500, radius: 1);
       expect(around.length, 3);
-      expect(around.map((l) => l.text).toList(), ['First line', 'Second line', 'Third line']);
+      expect(around.map((l) => l.text).toList(),
+          ['First line', 'Second line', 'Third line']);
     });
 
     test('linesAround clamps at boundaries', () {
@@ -91,7 +92,8 @@ void main() {
 [00:20.00]Third line
 ''';
 
-      final lyrics = LrcParser.parse(lrc, title: 'Test', artist: 'Artist', album: 'Album');
+      final lyrics =
+          LrcParser.parse(lrc, title: 'Test', artist: 'Artist', album: 'Album');
 
       expect(lyrics.title, 'Test');
       expect(lyrics.artist, 'Artist');

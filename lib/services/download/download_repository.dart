@@ -25,7 +25,8 @@ class SharedPreferencesDownloadRepository implements DownloadRepository {
       final json = _prefs.getString(key);
       if (json != null) {
         try {
-          tasks.add(DownloadTask.fromJson(jsonDecode(json) as Map<String, dynamic>));
+          tasks.add(
+              DownloadTask.fromJson(jsonDecode(json) as Map<String, dynamic>));
         } catch (_) {
           // 忽略损坏的条目
         }
@@ -103,7 +104,8 @@ final downloadRepositoryProvider = Provider<DownloadRepository>((ref) {
 });
 
 // 保持引用以便 dispose
-final downloadRepositoryInstanceProvider = Provider<SharedPreferencesDownloadRepository>((ref) {
+final downloadRepositoryInstanceProvider =
+    Provider<SharedPreferencesDownloadRepository>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return SharedPreferencesDownloadRepository(prefs);
 });

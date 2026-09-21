@@ -70,11 +70,12 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: DropdownButtonFormField<String>(
-                                                              value: currentPresetId,
-                                                              decoration: const InputDecoration(
+              value: currentPresetId,
+              decoration: const InputDecoration(
                 labelText: '预设',
                 border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               items: allPresets.map((preset) {
                 return DropdownMenuItem<String>(
@@ -96,7 +97,9 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
               }).toList(),
               onChanged: (value) {
                 if (value != null) {
-                  ref.read(equalizerCurrentPresetProvider.notifier).selectPreset(value);
+                  ref
+                      .read(equalizerCurrentPresetProvider.notifier)
+                      .selectPreset(value);
                 }
               },
             ),
@@ -105,7 +108,8 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
           // 10 段均衡器滑块
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: _buildBands(context, customGains, currentPresetId == 'custom'),
+            child:
+                _buildBands(context, customGains, currentPresetId == 'custom'),
           ),
 
           // 底部操作栏
@@ -115,19 +119,24 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
               children: [
                 if (currentPresetId == 'custom')
                   TextButton.icon(
-                    onPressed: () => _showSavePresetDialog(context, ref, customGains),
+                    onPressed: () =>
+                        _showSavePresetDialog(context, ref, customGains),
                     icon: const Icon(Icons.save),
                     label: const Text('保存为预设'),
                   )
-                else if (service.customPresets.any((p) => p.id == currentPresetId))
+                else if (service.customPresets
+                    .any((p) => p.id == currentPresetId))
                   TextButton.icon(
-                    onPressed: () => _confirmDeletePreset(context, ref, currentPresetId),
+                    onPressed: () =>
+                        _confirmDeletePreset(context, ref, currentPresetId),
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    label: const Text('删除预设', style: TextStyle(color: Colors.red)),
+                    label:
+                        const Text('删除预设', style: TextStyle(color: Colors.red)),
                   ),
                 const Spacer(),
                 TextButton.icon(
-                  onPressed: () => ref.read(equalizerCustomGainsProvider.notifier).reset(),
+                  onPressed: () =>
+                      ref.read(equalizerCustomGainsProvider.notifier).reset(),
                   icon: const Icon(Icons.restore),
                   label: const Text('重置'),
                 ),
@@ -140,7 +149,18 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
   }
 
   Widget _buildBands(BuildContext context, List<double> gains, bool isCustom) {
-    final labels = ['31', '62', '125', '250', '500', '1k', '2k', '4k', '8k', '16k'];
+    final labels = [
+      '31',
+      '62',
+      '125',
+      '250',
+      '500',
+      '1k',
+      '2k',
+      '4k',
+      '8k',
+      '16k'
+    ];
     final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
@@ -154,10 +174,17 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
               children: [
                 // 增益值显示
                 Text(
-                  gains[i] == 0 ? '0' : gains[i] > 0 ? '+${gains[i].toStringAsFixed(1)}' : gains[i].toStringAsFixed(1),
+                  gains[i] == 0
+                      ? '0'
+                      : gains[i] > 0
+                          ? '+${gains[i].toStringAsFixed(1)}'
+                          : gains[i].toStringAsFixed(1),
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: gains[i] != 0 ? colorScheme.primary : colorScheme.onSurfaceVariant,
-                        fontWeight: gains[i] != 0 ? FontWeight.w600 : FontWeight.normal,
+                        color: gains[i] != 0
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant,
+                        fontWeight:
+                            gains[i] != 0 ? FontWeight.w600 : FontWeight.normal,
                       ),
                 ),
                 const SizedBox(height: 4),
@@ -168,11 +195,17 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
                     child: SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         trackHeight: 4,
-                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-                        activeTrackColor: gains[i] != 0 ? colorScheme.primary : colorScheme.primary.withOpacity(0.5),
+                        thumbShape:
+                            const RoundSliderThumbShape(enabledThumbRadius: 8),
+                        overlayShape:
+                            const RoundSliderOverlayShape(overlayRadius: 16),
+                        activeTrackColor: gains[i] != 0
+                            ? colorScheme.primary
+                            : colorScheme.primary.withOpacity(0.5),
                         inactiveTrackColor: colorScheme.surfaceContainerHighest,
-                        thumbColor: gains[i] != 0 ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                        thumbColor: gains[i] != 0
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant,
                       ),
                       child: Slider(
                         value: gains[i],
@@ -181,7 +214,9 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
                         divisions: 48,
                         label: gains[i].toStringAsFixed(1),
                         onChanged: isCustom
-                            ? (value) => ref.read(equalizerCustomGainsProvider.notifier).updateBand(i, value)
+                            ? (value) => ref
+                                .read(equalizerCustomGainsProvider.notifier)
+                                .updateBand(i, value)
                             : null,
                       ),
                     ),
@@ -237,7 +272,9 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
             onPressed: () {
               final name = controller.text.trim();
               if (name.isNotEmpty) {
-                ref.read(equalizerServiceProvider).saveCustomPreset(name, gains);
+                ref
+                    .read(equalizerServiceProvider)
+                    .saveCustomPreset(name, gains);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('已保存预设：$name')),

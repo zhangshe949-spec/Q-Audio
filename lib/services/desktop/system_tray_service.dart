@@ -19,27 +19,27 @@ class SystemTrayService {
   bool _initialized = false;
 
   Future<void> initialize() async {
-      if (_initialized || kIsWeb) return;
+    if (_initialized || kIsWeb) return;
 
-      String iconPath;
-      if (Platform.isWindows) {
-        // system_tray on Windows needs absolute path to .ico file
-        final directory = await getApplicationDocumentsDirectory();
-        final iconFile = File('${directory.path}/app_icon.ico');
-        if (!await iconFile.exists()) {
-          // Copy from Flutter assets
-          final assetData = await rootBundle.load('assets/app_icon.ico');
-          await iconFile.writeAsBytes(assetData.buffer.asUint8List());
-        }
-        iconPath = iconFile.path;
-      } else {
-        iconPath = 'assets/app_icon.ico';
+    String iconPath;
+    if (Platform.isWindows) {
+      // system_tray on Windows needs absolute path to .ico file
+      final directory = await getApplicationDocumentsDirectory();
+      final iconFile = File('${directory.path}/app_icon.ico');
+      if (!await iconFile.exists()) {
+        // Copy from Flutter assets
+        final assetData = await rootBundle.load('assets/app_icon.ico');
+        await iconFile.writeAsBytes(assetData.buffer.asUint8List());
       }
+      iconPath = iconFile.path;
+    } else {
+      iconPath = 'assets/app_icon.ico';
+    }
 
-      await _systemTray.initSystemTray(
-        title: 'Q-Audio',
-        iconPath: iconPath,
-      );
+    await _systemTray.initSystemTray(
+      title: 'Q-Audio',
+      iconPath: iconPath,
+    );
 
     final menu = Menu();
     await menu.buildFrom([

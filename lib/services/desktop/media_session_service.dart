@@ -29,14 +29,14 @@ class MediaSessionService {
       onRewind: () {
         final playback = _ref.read(playerProvider);
         _ref.read(playerProvider.notifier).seek(
-          playback.position - const Duration(seconds: 10),
-        );
+              playback.position - const Duration(seconds: 10),
+            );
       },
       onFastForward: () {
         final playback = _ref.read(playerProvider);
         _ref.read(playerProvider.notifier).seek(
-          playback.position + const Duration(seconds: 10),
-        );
+              playback.position + const Duration(seconds: 10),
+            );
       },
       onSeekTo: (position) {
         _ref.read(playerProvider.notifier).seek(position);

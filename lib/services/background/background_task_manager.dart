@@ -47,9 +47,9 @@ abstract class CancellableTask implements BackgroundTask {
     required String id,
     required TaskPriority priority,
     required String description,
-  }) : _id = id,
-       _priority = priority,
-       _description = description;
+  })  : _id = id,
+        _priority = priority,
+        _description = description;
 
   final String _id;
   final TaskPriority _priority;
@@ -156,11 +156,12 @@ class _TaskPriorityQueue {
 class BackgroundTaskManager {
   BackgroundTaskManager._internal({
     int? maxConcurrentTasks,
-  })  : _maxConcurrentTasks = maxConcurrentTasks ?? 3 {
+  }) : _maxConcurrentTasks = maxConcurrentTasks ?? 3 {
     _startProcessor();
   }
 
-  static final BackgroundTaskManager instance = BackgroundTaskManager._internal();
+  static final BackgroundTaskManager instance =
+      BackgroundTaskManager._internal();
 
   /// 最大并发任务数
   final int _maxConcurrentTasks;
@@ -243,11 +244,13 @@ class BackgroundTaskManager {
   Future<void> _executeTask(BackgroundTask task) async {
     final startTime = DateTime.now();
     try {
-      debugPrint('BackgroundTaskManager: Starting task ${task.id} (${task.priority})');
+      debugPrint(
+          'BackgroundTaskManager: Starting task ${task.id} (${task.priority})');
       await task.execute();
       final duration = DateTime.now().difference(startTime);
       _recordExecution(task, true, duration);
-      debugPrint('BackgroundTaskManager: Task ${task.id} completed in ${duration.inMilliseconds}ms');
+      debugPrint(
+          'BackgroundTaskManager: Task ${task.id} completed in ${duration.inMilliseconds}ms');
     } catch (e) {
       final duration = DateTime.now().difference(startTime);
       _recordExecution(task, false, duration, error: e.toString());
@@ -261,7 +264,8 @@ class BackgroundTaskManager {
   }
 
   /// 记录执行历史
-  void _recordExecution(BackgroundTask task, bool success, Duration duration, {String? error}) {
+  void _recordExecution(BackgroundTask task, bool success, Duration duration,
+      {String? error}) {
     _executionHistory.add(TaskExecutionRecord(
       taskId: task.id,
       priority: task.priority,
@@ -290,18 +294,21 @@ class BackgroundTaskManager {
       final existing = _taskMap[task.id]!;
       if (existing.priority.index <= task.priority.index) {
         // 现有任务优先级更高或相同，忽略新任务
-        debugPrint('BackgroundTaskManager: Task ${task.id} skipped (existing has higher/equal priority)');
+        debugPrint(
+            'BackgroundTaskManager: Task ${task.id} skipped (existing has higher/equal priority)');
         return;
       } else {
         // 新任务优先级更高，替换
         _pendingQueue.removeWhere((t) => t.id == existing.id);
-        debugPrint('BackgroundTaskManager: Task ${task.id} replaced with higher priority');
+        debugPrint(
+            'BackgroundTaskManager: Task ${task.id} replaced with higher priority');
       }
     }
 
     _taskMap[task.id] = task;
     _pendingQueue.add(task);
-    debugPrint('BackgroundTaskManager: Task ${task.id} queued (${task.priority})');
+    debugPrint(
+        'BackgroundTaskManager: Task ${task.id} queued (${task.priority})');
   }
 
   /// 提交并等待完成
@@ -326,11 +333,14 @@ class BackgroundTaskManager {
 
   /// 取消指定优先级及以下的所有任务
   void cancelAll(TaskPriority priorityAndBelow) {
-    final toCancel = _pendingQueue.where((t) => t.priority.index >= priorityAndBelow.index).toList();
+    final toCancel = _pendingQueue
+        .where((t) => t.priority.index >= priorityAndBelow.index)
+        .toList();
     for (final task in toCancel) {
       cancel(task.id);
     }
-    for (final task in _runningTasks.where((t) => t.priority.index >= priorityAndBelow.index)) {
+    for (final task in _runningTasks
+        .where((t) => t.priority.index >= priorityAndBelow.index)) {
       task.cancel();
     }
   }
@@ -341,21 +351,27 @@ class BackgroundTaskManager {
       pendingCount: _pendingQueue.length,
       runningCount: _runningTasks.length,
       maxConcurrent: _maxConcurrentTasks,
-      runningTasks: _runningTasks.map((t) => TaskInfo(
-        id: t.id,
-        priority: t.priority,
-        description: t.description,
-      )).toList(),
-      pendingTasks: _pendingQueue.where((_) => true).map((t) => TaskInfo(
-        id: t.id,
-        priority: t.priority,
-        description: t.description,
-      )).toList(),
+      runningTasks: _runningTasks
+          .map((t) => TaskInfo(
+                id: t.id,
+                priority: t.priority,
+                description: t.description,
+              ))
+          .toList(),
+      pendingTasks: _pendingQueue
+          .where((_) => true)
+          .map((t) => TaskInfo(
+                id: t.id,
+                priority: t.priority,
+                description: t.description,
+              ))
+          .toList(),
     );
   }
 
   /// 获取执行历史
-  List<TaskExecutionRecord> getExecutionHistory() => List.unmodifiable(_executionHistory);
+  List<TaskExecutionRecord> getExecutionHistory() =>
+      List.unmodifiable(_executionHistory);
 
   /// 清空历史
   void clearHistory() => _executionHistory.clear();
@@ -369,7 +385,8 @@ class BackgroundTaskManager {
 
 /// 任务信息
 class TaskInfo {
-  TaskInfo({required this.id, required this.priority, required this.description});
+  TaskInfo(
+      {required this.id, required this.priority, required this.description});
   final String id;
   final TaskPriority priority;
   final String description;
@@ -447,7 +464,8 @@ class BackgroundTasks {
     TaskPriority priority = TaskPriority.normal,
     String description = '',
   }) {
-    return _GenericTask(id: id, priority: priority, action: action, description: description);
+    return _GenericTask(
+        id: id, priority: priority, action: action, description: description);
   }
 }
 
@@ -466,7 +484,8 @@ class _ScanTask extends CancellableTask {
 }
 
 class _DownloadTask extends CancellableTask {
-  _DownloadTask({required super.id, required super.priority, required this.downloader})
+  _DownloadTask(
+      {required super.id, required super.priority, required this.downloader})
       : super(description: '下载任务: $id');
 
   final Future<void> Function() downloader;
@@ -479,7 +498,8 @@ class _DownloadTask extends CancellableTask {
 }
 
 class _CacheCleanupTask extends CancellableTask {
-  _CacheCleanupTask({required super.id, required super.priority, required this.cleaner})
+  _CacheCleanupTask(
+      {required super.id, required super.priority, required this.cleaner})
       : super(description: '缓存清理: $id');
 
   final Future<void> Function() cleaner;

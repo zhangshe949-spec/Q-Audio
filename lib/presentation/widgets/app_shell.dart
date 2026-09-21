@@ -267,8 +267,8 @@ class _MiniPlayer extends ConsumerWidget {
           child: Text(
             '${AppStrings.miniPlayer}（占位）',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
         ),
       );

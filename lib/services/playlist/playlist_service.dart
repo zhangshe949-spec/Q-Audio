@@ -20,7 +20,7 @@ class PlaylistService {
     final id = _generateId();
     final now = DateTime.now();
     final trackIds = initialTracks?.map(Playlist.trackKey).toList() ?? [];
-    
+
     final playlist = Playlist(
       id: id,
       name: name,
@@ -30,7 +30,7 @@ class PlaylistService {
       createdAt: now,
       updatedAt: now,
     );
-    
+
     await _repository.save(playlist);
     return playlist;
   }
@@ -39,7 +39,8 @@ class PlaylistService {
   Future<void> rename(String id, String newName) async {
     final playlist = await _repository.getById(id);
     if (playlist != null) {
-      await _repository.save(playlist.copyWith(name: newName, updatedAt: DateTime.now()));
+      await _repository
+          .save(playlist.copyWith(name: newName, updatedAt: DateTime.now()));
     }
   }
 
@@ -47,7 +48,8 @@ class PlaylistService {
   Future<void> updateDescription(String id, String? description) async {
     final playlist = await _repository.getById(id);
     if (playlist != null) {
-      await _repository.save(playlist.copyWith(description: description, updatedAt: DateTime.now()));
+      await _repository.save(playlist.copyWith(
+          description: description, updatedAt: DateTime.now()));
     }
   }
 
@@ -55,7 +57,8 @@ class PlaylistService {
   Future<void> updateCover(String id, String? coverUrl) async {
     final playlist = await _repository.getById(id);
     if (playlist != null) {
-      await _repository.save(playlist.copyWith(coverUrl: coverUrl, updatedAt: DateTime.now()));
+      await _repository.save(
+          playlist.copyWith(coverUrl: coverUrl, updatedAt: DateTime.now()));
     }
   }
 
@@ -92,7 +95,8 @@ class PlaylistService {
     final playlist = await _repository.getById(id);
     if (playlist != null && index >= 0 && index < playlist.trackIds.length) {
       final newTrackIds = List<String>.from(playlist.trackIds)..removeAt(index);
-      await _repository.save(playlist.copyWith(trackIds: newTrackIds, updatedAt: DateTime.now()));
+      await _repository.save(
+          playlist.copyWith(trackIds: newTrackIds, updatedAt: DateTime.now()));
     }
   }
 

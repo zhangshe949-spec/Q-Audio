@@ -65,10 +65,10 @@ class ArtworkCacheService {
       final provider = NetworkImage(url);
       // ignore: unawaited_futures
       provider.resolve(const ImageConfiguration()).addListener(
-        ImageStreamListener((info, _) {
-          _saveToDiskCache(url, info.image);
-        }, onError: (_, __) {}),
-      );
+            ImageStreamListener((info, _) {
+              _saveToDiskCache(url, info.image);
+            }, onError: (_, __) {}),
+          );
     } catch (e) {
       debugPrint('ArtworkCacheService: Precache failed for $url: $e');
     }
@@ -184,7 +184,8 @@ class _DiskCachedNetworkImage extends ImageProvider<_DiskCachedNetworkImage> {
     );
   }
 
-  Future<ui.Codec> _loadAndCache(String url, ImageDecoderCallback decode) async {
+  Future<ui.Codec> _loadAndCache(
+      String url, ImageDecoderCallback decode) async {
     // 尝试从磁盘加载
     final diskPath = cacheService._getDiskCachePath(url);
     if (diskPath != null) {
@@ -226,7 +227,8 @@ class _DiskCachedNetworkImage extends ImageProvider<_DiskCachedNetworkImage> {
 }
 
 /// 合并 HTTP 响应字节
-Future<Uint8List> _consolidateHttpClientResponseBytes(HttpClientResponse response) async {
+Future<Uint8List> _consolidateHttpClientResponseBytes(
+    HttpClientResponse response) async {
   final contentLength = response.contentLength;
   if (contentLength == 0) return Uint8List(0);
 

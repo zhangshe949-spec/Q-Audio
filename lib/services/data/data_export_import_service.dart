@@ -20,7 +20,8 @@ class DataExportImportService {
 
   Future<File> exportAll() async {
     final dir = await getApplicationDocumentsDirectory();
-    final file = File('${dir.path}/q_audio_export_${DateTime.now().millisecondsSinceEpoch}.json');
+    final file = File(
+        '${dir.path}/q_audio_export_${DateTime.now().millisecondsSinceEpoch}.json');
 
     final data = <String, dynamic>{};
 

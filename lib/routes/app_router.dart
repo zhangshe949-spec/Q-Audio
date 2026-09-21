@@ -12,44 +12,46 @@ import 'package:q_audio/presentation/pages/settings_page.dart';
 import 'package:q_audio/presentation/pages/player_page.dart';
 
 GoRouter createAppRouter({String initialLocation = '/'}) => GoRouter(
-  initialLocation: initialLocation,
-  routes: [
-    ShellRoute(
-      builder: (context, state, child) => AppShell(child: child),
+      initialLocation: initialLocation,
       routes: [
-        GoRoute(path: '/', builder: (context, state) => const HomePage()),
-        GoRoute(
-          path: '/search',
-          builder: (context, state) => const SearchPage(),
+        ShellRoute(
+          builder: (context, state, child) => AppShell(child: child),
+          routes: [
+            GoRoute(path: '/', builder: (context, state) => const HomePage()),
+            GoRoute(
+              path: '/search',
+              builder: (context, state) => const SearchPage(),
+            ),
+            GoRoute(
+                path: '/radio', builder: (context, state) => const RadioPage()),
+            GoRoute(
+              path: '/audiobook',
+              builder: (context, state) => const AudiobookPage(),
+            ),
+            GoRoute(
+              path: '/podcast',
+              builder: (context, state) => const PodcastPage(),
+            ),
+            GoRoute(
+                path: '/local', builder: (context, state) => const LocalPage()),
+            GoRoute(
+              path: '/playlist',
+              builder: (context, state) => const PlaylistPage(),
+            ),
+            GoRoute(
+              path: '/downloads',
+              builder: (context, state) => const DownloadPage(),
+            ),
+            GoRoute(
+              path: '/settings',
+              builder: (context, state) => const SettingsPage(),
+            ),
+          ],
         ),
-        GoRoute(path: '/radio', builder: (context, state) => const RadioPage()),
+        // Full-screen player page (outside shell for full-screen experience)
         GoRoute(
-          path: '/audiobook',
-          builder: (context, state) => const AudiobookPage(),
-        ),
-        GoRoute(
-          path: '/podcast',
-          builder: (context, state) => const PodcastPage(),
-        ),
-        GoRoute(path: '/local', builder: (context, state) => const LocalPage()),
-        GoRoute(
-          path: '/playlist',
-          builder: (context, state) => const PlaylistPage(),
-        ),
-        GoRoute(
-          path: '/downloads',
-          builder: (context, state) => const DownloadPage(),
-        ),
-        GoRoute(
-          path: '/settings',
-          builder: (context, state) => const SettingsPage(),
+          path: '/player',
+          builder: (context, state) => const PlayerPage(),
         ),
       ],
-    ),
-    // Full-screen player page (outside shell for full-screen experience)
-    GoRoute(
-      path: '/player',
-      builder: (context, state) => const PlayerPage(),
-    ),
-  ],
-);
+    );

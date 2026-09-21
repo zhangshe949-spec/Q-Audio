@@ -37,14 +37,14 @@ class DioNetworkService implements NetworkService {
   DioNetworkService(this._dio);
 
   factory DioNetworkService.withDefaults() => DioNetworkService(
-    Dio(
-      BaseOptions(
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 20),
-        responseType: ResponseType.json,
-      ),
-    ),
-  );
+        Dio(
+          BaseOptions(
+            connectTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 20),
+            responseType: ResponseType.json,
+          ),
+        ),
+      );
 
   final Dio _dio;
 
@@ -82,27 +82,29 @@ class DioNetworkService implements NetworkService {
   }
 
   NetworkException _map(DioException error) => switch (error.type) {
-    DioExceptionType.connectionTimeout ||
-    DioExceptionType.sendTimeout ||
-    DioExceptionType.receiveTimeout ||
-    DioExceptionType.transformTimeout => NetworkException(
-      NetworkErrorKind.timeout,
-      error.message ?? 'Request timed out',
-      cause: error,
-    ),
-    DioExceptionType.badResponse => NetworkException(
-      NetworkErrorKind.http,
-      error.message ?? 'HTTP error',
-      statusCode: error.response?.statusCode,
-      cause: error,
-    ),
-    DioExceptionType.badCertificate ||
-    DioExceptionType.connectionError ||
-    DioExceptionType.cancel ||
-    DioExceptionType.unknown => NetworkException(
-      NetworkErrorKind.network,
-      error.message ?? 'Network error',
-      cause: error,
-    ),
-  };
+        DioExceptionType.connectionTimeout ||
+        DioExceptionType.sendTimeout ||
+        DioExceptionType.receiveTimeout ||
+        DioExceptionType.transformTimeout =>
+          NetworkException(
+            NetworkErrorKind.timeout,
+            error.message ?? 'Request timed out',
+            cause: error,
+          ),
+        DioExceptionType.badResponse => NetworkException(
+            NetworkErrorKind.http,
+            error.message ?? 'HTTP error',
+            statusCode: error.response?.statusCode,
+            cause: error,
+          ),
+        DioExceptionType.badCertificate ||
+        DioExceptionType.connectionError ||
+        DioExceptionType.cancel ||
+        DioExceptionType.unknown =>
+          NetworkException(
+            NetworkErrorKind.network,
+            error.message ?? 'Network error',
+            cause: error,
+          ),
+      };
 }

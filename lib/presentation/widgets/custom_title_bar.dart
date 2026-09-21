@@ -5,10 +5,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 
-import '../../services/playback/player_controller.dart'
-    show PlaybackStatus;
-import '../../presentation/providers/player_providers.dart'
-    show playerProvider;
+import '../../services/playback/player_controller.dart' show PlaybackStatus;
+import '../../presentation/providers/player_providers.dart' show playerProvider;
 
 /// 自定义标题栏 - 根据平台自动选择实现
 class CustomTitleBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -20,7 +18,7 @@ class CustomTitleBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 测试环境、Web、移动端使用简化版标题栏
-    if (const bool.fromEnvironment('flutter.test') || 
+    if (const bool.fromEnvironment('flutter.test') ||
         kIsWeb ||
         !(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       return const _SimpleTitleBar();
@@ -47,7 +45,8 @@ class _SimpleTitleBar extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
-          const Icon(Icons.music_note_rounded, size: 20, color: Color(0xFF6C5CE7)),
+          const Icon(Icons.music_note_rounded,
+              size: 20, color: Color(0xFF6C5CE7)),
           const SizedBox(width: 8),
           Text(
             'Q-Audio',
@@ -78,12 +77,14 @@ class AdaptiveTitleBar extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       title: const Text('Q-Audio'),
       centerTitle: false,
-      leading: showMenuButton ? Builder(
-        builder: (context) => IconButton(
-          icon: const Icon(Icons.menu_rounded),
-          onPressed: () => Scaffold.of(context).openDrawer(),
-        ),
-      ) : null,
+      leading: showMenuButton
+          ? Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            )
+          : null,
       actions: [
         if (playback.hasTrack)
           Padding(
@@ -133,7 +134,8 @@ class AppTitleBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   bool get _isDesktop {
-    return !kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    return !kIsWeb &&
+        (Platform.isWindows || Platform.isLinux || Platform.isMacOS);
   }
 
   @override
@@ -174,14 +176,16 @@ class _DesktopTitleBar extends ConsumerWidget implements PreferredSizeWidget {
                     padding: const EdgeInsets.only(left: 12),
                     child: Row(
                       children: [
-                        const Icon(Icons.music_note_rounded, size: 20, color: Color(0xFF6C5CE7)),
+                        const Icon(Icons.music_note_rounded,
+                            size: 20, color: Color(0xFF6C5CE7)),
                         const SizedBox(width: 8),
                         Text(
                           'Q-Audio',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.onSurface,
+                                  ),
                         ),
                       ],
                     ),
@@ -206,7 +210,7 @@ class _WindowButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Row(
       children: [
         MinimizeWindowButton(

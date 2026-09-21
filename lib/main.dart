@@ -7,10 +7,8 @@ import 'core/theme/app_theme.dart';
 import 'presentation/providers/catalog_providers.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'presentation/providers/player_providers.dart' show playerProvider;
-import 'presentation/pages/download_page.dart'
-    show downloadTasksProvider;
-import 'presentation/pages/playlist_page.dart'
-    show playlistsProvider;
+import 'presentation/pages/download_page.dart' show downloadTasksProvider;
+import 'presentation/pages/playlist_page.dart' show playlistsProvider;
 import 'routes/app_router.dart';
 import 'services/desktop/desktop_providers.dart';
 import 'services/equalizer/equalizer_providers.dart';

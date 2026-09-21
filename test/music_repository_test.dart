@@ -9,13 +9,14 @@ void main() {
     String title = 'Test song',
     String artist = 'Test artist',
     String album = 'Test album',
-  }) => Track(
-    id: id,
-    sourceId: source,
-    title: title,
-    artist: artist,
-    album: album,
-  );
+  }) =>
+      Track(
+        id: id,
+        sourceId: source,
+        title: title,
+        artist: artist,
+        album: album,
+      );
 
   test('empty repository has no fabricated songs', () async {
     final repository = InMemoryMusicRepository();

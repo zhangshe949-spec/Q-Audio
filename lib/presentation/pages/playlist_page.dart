@@ -46,10 +46,10 @@ class PlaylistPage extends ConsumerWidget {
           }
 
           return ListView.separated(
-                                // 虚拟化优化
-                                cacheExtent: 500.0, itemCount: playlists.length,
-                                separatorBuilder: (_, __) => const Divider(height: 1),
-                                itemBuilder: (context, index) {
+            // 虚拟化优化
+            cacheExtent: 500.0, itemCount: playlists.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (context, index) {
               final playlist = playlists[index];
               return _buildPlaylistTile(context, ref, playlist);
             },
@@ -67,7 +67,8 @@ class PlaylistPage extends ConsumerWidget {
           Icon(
             Icons.playlist_play_outlined,
             size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+            color:
+                Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -93,7 +94,8 @@ class PlaylistPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildPlaylistTile(BuildContext context, WidgetRef ref, Playlist playlist) {
+  Widget _buildPlaylistTile(
+      BuildContext context, WidgetRef ref, Playlist playlist) {
     final service = ref.read(playlistServiceProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -119,7 +121,8 @@ class PlaylistPage extends ConsumerWidget {
                   ),
                   FilledButton(
                     onPressed: () => Navigator.pop(context, true),
-                    style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
+                    style: FilledButton.styleFrom(
+                        backgroundColor: colorScheme.error),
                     child: const Text('删除'),
                   ),
                 ],
@@ -137,23 +140,40 @@ class PlaylistPage extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
         ),
         trailing: PopupMenuButton<String>(
-          onSelected: (value) => _handleMenuAction(context, ref, service, playlist, value),
+          onSelected: (value) =>
+              _handleMenuAction(context, ref, service, playlist, value),
           itemBuilder: (context) => [
             const PopupMenuItem(
               value: 'edit',
-              child: Row(children: [Icon(Icons.edit, size: 20), SizedBox(width: 8), Text('重命名')]),
+              child: Row(children: [
+                Icon(Icons.edit, size: 20),
+                SizedBox(width: 8),
+                Text('重命名')
+              ]),
             ),
             const PopupMenuItem(
               value: 'cover',
-              child: Row(children: [Icon(Icons.image, size: 20), SizedBox(width: 8), Text('更换封面')]),
+              child: Row(children: [
+                Icon(Icons.image, size: 20),
+                SizedBox(width: 8),
+                Text('更换封面')
+              ]),
             ),
             const PopupMenuItem(
               value: 'clear',
-              child: Row(children: [Icon(Icons.clear_all, size: 20), SizedBox(width: 8), Text('清空列表')]),
+              child: Row(children: [
+                Icon(Icons.clear_all, size: 20),
+                SizedBox(width: 8),
+                Text('清空列表')
+              ]),
             ),
             const PopupMenuItem(
               value: 'delete',
-              child: Row(children: [Icon(Icons.delete, size: 20, color: Colors.red), SizedBox(width: 8), Text('删除', style: TextStyle(color: Colors.red))]),
+              child: Row(children: [
+                Icon(Icons.delete, size: 20, color: Colors.red),
+                SizedBox(width: 8),
+                Text('删除', style: TextStyle(color: Colors.red))
+              ]),
             ),
           ],
         ),
@@ -164,20 +184,20 @@ class PlaylistPage extends ConsumerWidget {
   }
 
   Widget _buildCover(Playlist playlist, ColorScheme colorScheme) {
-      if (playlist.coverUrl != null && playlist.coverUrl!.isNotEmpty) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: CachedArtwork(
-                      url: playlist.coverUrl!,
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.cover,
-                      errorWidget: _defaultCover(colorScheme),
-                    ),
-        );
-      }
-      return _defaultCover(colorScheme);
+    if (playlist.coverUrl != null && playlist.coverUrl!.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: CachedArtwork(
+          url: playlist.coverUrl!,
+          width: 48,
+          height: 48,
+          fit: BoxFit.cover,
+          errorWidget: _defaultCover(colorScheme),
+        ),
+      );
     }
+    return _defaultCover(colorScheme);
+  }
 
   Widget _defaultCover(ColorScheme colorScheme) {
     return Container(
@@ -186,10 +206,14 @@ class PlaylistPage extends ConsumerWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         gradient: LinearGradient(
-          colors: [colorScheme.primaryContainer, colorScheme.secondaryContainer],
+          colors: [
+            colorScheme.primaryContainer,
+            colorScheme.secondaryContainer
+          ],
         ),
       ),
-      child: Icon(Icons.music_note, color: colorScheme.onPrimaryContainer, size: 24),
+      child: Icon(Icons.music_note,
+          color: colorScheme.onPrimaryContainer, size: 24),
     );
   }
 
@@ -259,7 +283,8 @@ class PlaylistPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _showRenameDialog(BuildContext context, PlaylistService service, Playlist playlist) async {
+  Future<void> _showRenameDialog(
+      BuildContext context, PlaylistService service, Playlist playlist) async {
     final controller = TextEditingController(text: playlist.name);
     await showDialog(
       context: context,
@@ -271,7 +296,8 @@ class PlaylistPage extends ConsumerWidget {
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('取消')),
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text('取消')),
           FilledButton(
             onPressed: () {
               final name = controller.text.trim();
@@ -287,7 +313,8 @@ class PlaylistPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showCoverDialog(BuildContext context, PlaylistService service, Playlist playlist) async {
+  Future<void> _showCoverDialog(
+      BuildContext context, PlaylistService service, Playlist playlist) async {
     final controller = TextEditingController(text: playlist.coverUrl ?? '');
     await showDialog(
       context: context,
@@ -302,7 +329,8 @@ class PlaylistPage extends ConsumerWidget {
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('取消')),
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text('取消')),
           FilledButton(
             onPressed: () {
               final url = controller.text.trim();
@@ -316,17 +344,21 @@ class PlaylistPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmClear(BuildContext context, PlaylistService service, Playlist playlist) async {
+  Future<void> _confirmClear(
+      BuildContext context, PlaylistService service, Playlist playlist) async {
     final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('清空播放列表'),
             content: Text('确定要清空 "${playlist.name}" 中的所有歌曲吗？'),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('取消')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('取消')),
               FilledButton(
                 onPressed: () => Navigator.pop(context, true),
-                style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.error),
                 child: const Text('清空'),
               ),
             ],
@@ -339,7 +371,8 @@ class PlaylistPage extends ConsumerWidget {
     }
   }
 
-  void _openPlaylistDetail(BuildContext context, WidgetRef ref, Playlist playlist) {
+  void _openPlaylistDetail(
+      BuildContext context, WidgetRef ref, Playlist playlist) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -397,9 +430,27 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'rename', child: Row(children: [Icon(Icons.edit, size: 20), SizedBox(width: 8), Text('重命名')])),
-              const PopupMenuItem(value: 'cover', child: Row(children: [Icon(Icons.image, size: 20), SizedBox(width: 8), Text('更换封面')])),
-              const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.clear_all, size: 20), SizedBox(width: 8), Text('清空')])),
+              const PopupMenuItem(
+                  value: 'rename',
+                  child: Row(children: [
+                    Icon(Icons.edit, size: 20),
+                    SizedBox(width: 8),
+                    Text('重命名')
+                  ])),
+              const PopupMenuItem(
+                  value: 'cover',
+                  child: Row(children: [
+                    Icon(Icons.image, size: 20),
+                    SizedBox(width: 8),
+                    Text('更换封面')
+                  ])),
+              const PopupMenuItem(
+                  value: 'clear',
+                  child: Row(children: [
+                    Icon(Icons.clear_all, size: 20),
+                    SizedBox(width: 8),
+                    Text('清空')
+                  ])),
             ],
           ),
         ],
@@ -409,36 +460,45 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.music_off, size: 64, color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
+                  Icon(Icons.music_off,
+                      size: 64,
+                      color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
                   const SizedBox(height: 16),
-                  Text('播放列表为空', style: Theme.of(context).textTheme.titleMedium),
+                  Text('播放列表为空',
+                      style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
-                  Text('在其他页面长按歌曲可添加到播放列表', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant), textAlign: TextAlign.center),
+                  Text('在其他页面长按歌曲可添加到播放列表',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: colorScheme.onSurfaceVariant),
+                      textAlign: TextAlign.center),
                 ],
               ),
             )
           : ReorderableListView.builder(
-                                            // 虚拟化优化：使用 builder 版本
-                                            itemCount: _playlist.trackIds.length,
-                                            onReorder: (oldIndex, newIndex) async {
-                                              if (oldIndex < newIndex) newIndex--;
-                                              await service.moveTrack(_playlist.id, oldIndex, newIndex);
-                                              setState(() {
-                                                _playlist = _playlist.moveTrack(oldIndex, newIndex);
-                                              });
-                                            },
-                                            itemBuilder: (context, index) => _buildTrackTile(
-                                              context,
-                                              ref,
-                                              service,
-                                              _playlist.trackIds[index],
-                                              index,
-                                            ),
-                                          ),
+              // 虚拟化优化：使用 builder 版本
+              itemCount: _playlist.trackIds.length,
+              onReorder: (oldIndex, newIndex) async {
+                if (oldIndex < newIndex) newIndex--;
+                await service.moveTrack(_playlist.id, oldIndex, newIndex);
+                setState(() {
+                  _playlist = _playlist.moveTrack(oldIndex, newIndex);
+                });
+              },
+              itemBuilder: (context, index) => _buildTrackTile(
+                context,
+                ref,
+                service,
+                _playlist.trackIds[index],
+                index,
+              ),
+            ),
     );
   }
 
-  Widget _buildTrackTile(BuildContext context, WidgetRef ref, PlaylistService service, String trackKey, int index) {
+  Widget _buildTrackTile(BuildContext context, WidgetRef ref,
+      PlaylistService service, String trackKey, int index) {
     final parts = trackKey.split(':');
     final sourceId = parts.isNotEmpty ? parts[0] : '';
     final id = parts.length > 1 ? parts[1] : trackKey;
@@ -447,7 +507,9 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
       key: Key('playlist-track-$trackKey'),
       leading: CircleAvatar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: Text('${index + 1}', style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer)),
+        child: Text('${index + 1}',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimaryContainer)),
       ),
       title: Text('$sourceId:$id'),
       subtitle: Text('来源: $sourceId'),
@@ -463,48 +525,80 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
 
   Future<void> _playAll(WidgetRef ref) async {
     // TODO: 解析 trackIds 并加入播放队列
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('播放全部功能待实现')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('播放全部功能待实现')));
   }
 
-  Future<void> _showRenameDialog(BuildContext context, PlaylistService service, Playlist playlist) async {
+  Future<void> _showRenameDialog(
+      BuildContext context, PlaylistService service, Playlist playlist) async {
     final controller = TextEditingController(text: playlist.name);
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('重命名'),
-        content: TextField(controller: controller, decoration: const InputDecoration(labelText: '新名称'), autofocus: true),
+        content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(labelText: '新名称'),
+            autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('取消')),
-          FilledButton(onPressed: () { final name = controller.text.trim(); if (name.isNotEmpty) service.rename(playlist.id, name); Navigator.pop(context); }, child: const Text('确定')),
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text('取消')),
+          FilledButton(
+              onPressed: () {
+                final name = controller.text.trim();
+                if (name.isNotEmpty) service.rename(playlist.id, name);
+                Navigator.pop(context);
+              },
+              child: const Text('确定')),
         ],
       ),
     );
   }
 
-  Future<void> _showCoverDialog(BuildContext context, PlaylistService service, Playlist playlist) async {
+  Future<void> _showCoverDialog(
+      BuildContext context, PlaylistService service, Playlist playlist) async {
     final controller = TextEditingController(text: playlist.coverUrl ?? '');
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('更换封面'),
-        content: TextField(controller: controller, decoration: const InputDecoration(labelText: '封面图片 URL', hintText: 'https://example.com/cover.jpg'), autofocus: true),
+        content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+                labelText: '封面图片 URL',
+                hintText: 'https://example.com/cover.jpg'),
+            autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('取消')),
-          FilledButton(onPressed: () { final url = controller.text.trim(); service.updateCover(playlist.id, url.isEmpty ? null : url); Navigator.pop(context); }, child: const Text('确定')),
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text('取消')),
+          FilledButton(
+              onPressed: () {
+                final url = controller.text.trim();
+                service.updateCover(playlist.id, url.isEmpty ? null : url);
+                Navigator.pop(context);
+              },
+              child: const Text('确定')),
         ],
       ),
     );
   }
 
-  Future<void> _confirmClear(BuildContext context, PlaylistService service, Playlist playlist) async {
+  Future<void> _confirmClear(
+      BuildContext context, PlaylistService service, Playlist playlist) async {
     final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('清空播放列表'),
             content: Text('确定要清空 "${playlist.name}" 中的所有歌曲吗？'),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('取消')),
-              FilledButton(onPressed: () => Navigator.pop(context, true), style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error), child: const Text('清空')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('取消')),
+              FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.error),
+                  child: const Text('清空')),
             ],
           ),
         ) ??

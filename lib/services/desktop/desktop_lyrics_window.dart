@@ -28,16 +28,17 @@ class DesktopLyricsWindowService {
     if (_initialized || kIsWeb) return;
 
     // 监听播放状态变化流
-    _playbackSubscription = _ref
-        .read(playbackStateStreamProvider)
-        .listen(_onPlaybackChanged);
+    _playbackSubscription =
+        _ref.read(playbackStateStreamProvider).listen(_onPlaybackChanged);
 
     _initialized = true;
   }
 
   void _onPlaybackChanged(PlaybackState? playback) {
     if (playback == null) return;
-    if (playback.track != null && playback.status == PlaybackStatus.playing && !_isVisible) {
+    if (playback.track != null &&
+        playback.status == PlaybackStatus.playing &&
+        !_isVisible) {
       show();
     } else if (playback.status != PlaybackStatus.playing && _isVisible) {
       hide();
@@ -53,9 +54,8 @@ class DesktopLyricsWindowService {
     // 加载当前播放歌曲的歌词
     final playback = _ref.read(playerProvider);
     if (playback.track != null) {
-      final lyrics = await _ref
-          .read(lyricsServiceProvider)
-          .getLyrics(playback.track!);
+      final lyrics =
+          await _ref.read(lyricsServiceProvider).getLyrics(playback.track!);
       _overlayKey.currentState?.updateLyrics(lyrics);
     }
 
@@ -138,7 +138,8 @@ class _DesktopLyricsOverlay extends ConsumerStatefulWidget {
   final Ref ref;
 
   @override
-  ConsumerState<_DesktopLyricsOverlay> createState() => _DesktopLyricsOverlayState();
+  ConsumerState<_DesktopLyricsOverlay> createState() =>
+      _DesktopLyricsOverlayState();
 }
 
 class _DesktopLyricsOverlayState extends ConsumerState<_DesktopLyricsOverlay>
@@ -242,9 +243,10 @@ class _DesktopLyricsOverlayState extends ConsumerState<_DesktopLyricsOverlay>
     }
 
     final lines = _lyrics!.lines;
-    final currentLine = _currentLineIndex >= 0 && _currentLineIndex < lines.length
-        ? lines[_currentLineIndex]
-        : null;
+    final currentLine =
+        _currentLineIndex >= 0 && _currentLineIndex < lines.length
+            ? lines[_currentLineIndex]
+            : null;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
