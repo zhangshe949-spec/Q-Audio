@@ -25,6 +25,7 @@ void main() {
     expect(find.text('夜航'), findsOneWidget);
     expect(find.byKey(const Key('local-remove-local-1')), findsOneWidget);
     expect(find.byKey(const Key('local-remove-web-2')), findsOneWidget);
+    await tester.pumpAndSettle();
   });
 
   testWidgets('removing a track updates the list immediately', (tester) async {
@@ -65,6 +66,7 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getString('q_audio.v1.themeMode');
     expect(stored, anyOf('dark', 'light'));
+    await tester.pumpAndSettle();
   });
 
   testWidgets('restored dark theme is applied at startup', (tester) async {
@@ -77,6 +79,7 @@ void main() {
     // The restore provider overrides the default: dark content theme.
     final theme = Theme.of(tester.element(find.byType(SettingsPage)));
     expect(theme.brightness, Brightness.dark);
+    await tester.pumpAndSettle();
   });
 
   testWidgets('corrupted stored theme falls back to default mode', (tester) async {
@@ -86,5 +89,6 @@ void main() {
       initialValues: {'q_audio.v1.themeMode': 'banana'},
     );
     expect(tester.takeException(), isNull);
+    await tester.pumpAndSettle();
   });
 }

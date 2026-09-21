@@ -42,11 +42,12 @@ Future<GoRouter> mountApp(
   final preferences = await SharedPreferences.getInstance();
   final router = createAppRouter(initialLocation: location);
   addTearDown(() async {
-    await tester.pumpWidget(const SizedBox.shrink());
-    router.dispose();
-    tester.view.resetPhysicalSize();
-    tester.view.resetDevicePixelRatio();
-  });
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(const SizedBox.shrink());
+      router.dispose();
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
   await tester.pumpWidget(
     ProviderScope(
       overrides: [

@@ -8,17 +8,18 @@ import '../test_app.dart';
 void main() {
   for (final mode in [ThemeMode.light, ThemeMode.dark]) {
     testWidgets('initial theme $mode applies to content', (tester) async {
-      await mountApp(tester, location: '/settings', mode: mode);
-      final theme = Theme.of(tester.element(find.byType(SettingsPage)));
-      expect(
-        theme.brightness,
-        mode == ThemeMode.dark ? Brightness.dark : Brightness.light,
-      );
-      expect(
-        theme.colorScheme.primary,
-        mode == ThemeMode.dark ? AppColors.darkPrimary : AppColors.lightPrimary,
-      );
-    });
+          await mountApp(tester, location: '/settings', mode: mode);
+          final theme = Theme.of(tester.element(find.byType(SettingsPage)));
+          expect(
+            theme.brightness,
+            mode == ThemeMode.dark ? Brightness.dark : Brightness.light,
+          );
+          expect(
+            theme.colorScheme.primary,
+            mode == ThemeMode.dark ? AppColors.darkPrimary : AppColors.lightPrimary,
+          );
+          await tester.pumpAndSettle();
+        });
   }
   testWidgets('theme toggle retains router location', (tester) async {
     final router = await mountApp(tester, location: '/settings');
