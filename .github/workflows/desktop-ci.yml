@@ -1,0 +1,90 @@
+name: Q-Audio Desktop CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  FLUTTER_VERSION: 3.24.0
+
+jobs:
+  test-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format --set-exit-if-changed .
+      - run: flutter analyze --fatal-infos
+      - run: flutter test --coverage
+
+  build-windows-msix:
+    needs: test-lint
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build Windows MSIX
+        shell: pwsh
+        run: ./ci/windows_msix.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Windows-MSIX
+          path: build/windows/msix/*.msix
+
+  build-macos-dmg:
+    needs: test-lint
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build macos --release
+      - run: chmod +x ci/macos_dmg.sh
+      - run: ./ci/macos_dmg.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macOS-DMG
+          path: build/macos/dmg/*.dmg
+
+  build-linux-appimage:
+    needs: test-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Install AppImage toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y patchelf desktop-file-utils libgtk-3-0 libglu1-mesa zsync wget
+          mkdir -p tools/appimage
+          cd tools/appimage
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage appimagetool-x86_64.AppImage
+      - run: chmod +x ci/linux_appimage.sh
+      - run: ./ci/linux_appimage.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Linux-AppImage
+          path: build/linux/appimage/*.AppImage
