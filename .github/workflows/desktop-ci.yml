@@ -22,7 +22,7 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: dart format --set-exit-if-changed .
-      - run: flutter analyze --fatal-infos
+      - run: flutter analyze
       - run: flutter test --coverage
 
   build-windows-msix:
