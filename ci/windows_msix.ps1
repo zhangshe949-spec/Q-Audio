@@ -26,7 +26,19 @@ $msixOutput = "build/windows/msix"
 if (Test-Path $msixOutput) { Remove-Item $msixOutput -Recurse -Force }
 New-Item -ItemType Directory -Path $msixOutput | Out-Null
 
-$buildDir = "build/windows/runner/Release"
+# Flutter may use an architecture-specific output directory
+# (build/windows/x64/runner/Release on recent SDKs).
+$buildCandidates = @(
+    "build/windows/x64/runner/Release",
+    "build/windows/runner/Release"
+)
+$buildDir = $buildCandidates |
+    Where-Object { Test-Path $_ } |
+    Select-Object -First 1
+if (-not $buildDir) {
+    throw "Flutter Windows release output not found (tried: $($buildCandidates -join ', '))."
+}
+Write-Host "Packaging Windows build from: $buildDir"
 $msixFile = Join-Path $msixOutput "Q-Audio.msix"
 
 & $makeappx.FullName pack /d $buildDir /p $msixFile /l
