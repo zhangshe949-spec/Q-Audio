@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -490,44 +491,26 @@ class LocalPage extends ConsumerWidget {
     dynamic notifier,
     StateSetter setState,
   ) async {
-    // 使用 file_picker 或原生目录选择器
-    // 这里简化为文本输入
-    final controller = TextEditingController();
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('添加扫描目录'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: '输入文件夹绝对路径',
-            labelText: '目录路径',
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('添加'),
-          ),
-        ],
-      ),
+    // 系统文件夹选择对话框：鼠标点选，不再手输路径。
+    final picked = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: '选择音乐文件夹',
+      lockParentWindow: true,
     );
+    if (picked == null || picked.isEmpty) return; // 用户取消
 
-    if (result != null && result.isNotEmpty) {
-      final dir = Directory(result);
-      if (await dir.exists()) {
-        notifier.addDirectory(result);
-        setState(() {});
-      } else if (context.mounted) {
+    final dir = Directory(picked);
+    if (await dir.exists()) {
+      notifier.addDirectory(picked);
+      setState(() {});
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('目录不存在')),
+          SnackBar(content: Text('已添加：$picked')),
         );
       }
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('目录不存在')),
+      );
     }
   }
 }

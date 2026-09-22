@@ -8,9 +8,13 @@ import 'package:go_router/go_router.dart';
 import '../providers/catalog_providers.dart' show musicSearchProvider;
 import '../providers/player_providers.dart' show playerProvider;
 import '../../domain/entities/track.dart';
+import '../../services/music_source/chart_service.dart'
+    show hotChartProvider, newChartProvider, playHistoryProvider;
+import '../../services/download/download_providers.dart'
+    show downloadServiceProvider;
 import '../../services/playback/player_controller.dart';
 
-/// 首页：搜索直达 + 快捷入口 + 热门推荐。
+/// 首页：搜索直达 + 榜单（热歌榜/新歌榜）+ 播放历史 + 快捷入口。
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -91,6 +95,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Future<void> _playTrack(Track track) async {
     final service = ref.read(musicSearchProvider);
     final player = ref.read(playerProvider.notifier);
+    ref.read(playHistoryProvider.notifier).record(track);
     final url = await service.resolveUrl(track);
     if (!mounted) return;
     if (url != null) {
@@ -99,15 +104,56 @@ class _HomePageState extends ConsumerState<HomePage> {
       context.go('/player');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('「${track.title}」无法获取播放地址，试试其他来源')),
+        SnackBar(
+          content: Text(
+            '「${track.title}」该来源（${track.sourceId}）暂无法播放，'
+            '试试其他来源的同名歌曲',
+          ),
+          duration: const Duration(seconds: 3),
+        ),
       );
     }
+  }
+
+  Future<void> _downloadTrack(Track track) async {
+    final service = ref.read(musicSearchProvider);
+    final url = await service.resolveUrl(track);
+    if (!mounted) return;
+    if (url == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('「${track.title}」无法获取下载地址')),
+      );
+      return;
+    }
+    final safeName = '${track.artist.isNotEmpty ? '${track.artist} - ' : ''}'
+        '${track.title}'
+        '.mp3';
+    await ref.read(downloadServiceProvider).startDownload(
+          url: url,
+          fileName: safeName,
+          title: track.title,
+          artist: track.artist,
+          album: track.album,
+        );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('已开始下载：${track.title}'),
+        action: SnackBarAction(
+          label: '查看',
+          onPressed: () => context.go('/downloads'),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final player = ref.watch(playerProvider);
+    final history = ref.watch(playHistoryProvider);
+    final hotChart = ref.watch(hotChartProvider);
+    final newChart = ref.watch(newChartProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -207,13 +253,40 @@ class _HomePageState extends ConsumerState<HomePage> {
                 (track) => _TrackTile(
                   track: track,
                   onTap: () => _playTrack(track),
+                  onDownload: () => _downloadTrack(track),
                 ),
               ),
             ],
           ] else ...[
+            // 播放历史
+            if (history.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text('最近播放', style: theme.textTheme.titleSmall),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          ref.read(playHistoryProvider.notifier).clear(),
+                      child: const Text('清空'),
+                    ),
+                  ],
+                ),
+              ),
+              ...history.take(5).map(
+                    (track) => _TrackTile(
+                      track: track,
+                      onTap: () => _playTrack(track),
+                      onDownload: () => _downloadTrack(track),
+                    ),
+                  ),
+            ],
+
             // 快捷入口
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
               child: Text('快捷入口', style: theme.textTheme.titleSmall),
             ),
             Padding(
@@ -244,10 +317,26 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
 
-            // 热门推荐
+            // 热歌榜
+            _ChartSection(
+              title: '热歌榜',
+              icon: Icons.local_fire_department,
+              asyncTracks: hotChart,
+              onPlay: _playTrack,
+            ),
+
+            // 新歌榜
+            _ChartSection(
+              title: '新歌榜',
+              icon: Icons.fiber_new,
+              asyncTracks: newChart,
+              onPlay: _playTrack,
+            ),
+
+            // 热门搜索
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-              child: Text('热门推荐', style: theme.textTheme.titleSmall),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              child: Text('热门搜索', style: theme.textTheme.titleSmall),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -269,7 +358,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                '点击歌手名直接搜索，结果来自网易云 / QQ音乐 / 酷我',
+                '搜索聚合网易云 / QQ音乐 / 酷我；榜单来自网易云',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -283,11 +372,124 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 }
 
+/// 榜单区块：加载中转圈、失败显示提示、成功显示前 10 首。
+class _ChartSection extends StatelessWidget {
+  const _ChartSection({
+    required this.title,
+    required this.icon,
+    required this.asyncTracks,
+    required this.onPlay,
+  });
+
+  final String title;
+  final IconData icon;
+  final AsyncValue<List<Track>> asyncTracks;
+  final void Function(Track) onPlay;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: theme.colorScheme.primary),
+              const SizedBox(width: 6),
+              Text(title, style: theme.textTheme.titleSmall),
+            ],
+          ),
+        ),
+        asyncTracks.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          ),
+          error: (e, _) => Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              '榜单加载失败，稍后再试',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          data: (tracks) {
+            if (tracks.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  '暂无数据',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              );
+            }
+            return Column(
+              children: tracks.take(10).toList().asMap().entries.map((entry) {
+                final index = entry.key;
+                final track = entry.value;
+                final rankColor = switch (index) {
+                  0 => Colors.red.shade600,
+                  1 => Colors.orange.shade600,
+                  2 => Colors.amber.shade700,
+                  _ => theme.colorScheme.onSurfaceVariant,
+                };
+                return ListTile(
+                  dense: true,
+                  key: Key('chart-$title-$index'),
+                  leading: SizedBox(
+                    width: 28,
+                    child: Text(
+                      '${index + 1}',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: rankColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    track.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    track.artist,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: const Icon(Icons.play_circle_outline),
+                  onTap: () => onPlay(track),
+                );
+              }).toList(),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
 class _TrackTile extends StatelessWidget {
-  const _TrackTile({required this.track, required this.onTap});
+  const _TrackTile({
+    required this.track,
+    required this.onTap,
+    this.onDownload,
+  });
 
   final Track track;
   final VoidCallback onTap;
+  final VoidCallback? onDownload;
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +518,19 @@ class _TrackTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: Icon(Icons.play_circle_outline, color: colorScheme.primary),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (onDownload != null)
+            IconButton(
+              key: Key('download-${track.sourceId}-${track.id}'),
+              icon: const Icon(Icons.download_outlined, size: 20),
+              tooltip: '下载',
+              onPressed: onDownload,
+            ),
+          Icon(Icons.play_circle_outline, color: colorScheme.primary),
+        ],
+      ),
       onTap: onTap,
     );
   }

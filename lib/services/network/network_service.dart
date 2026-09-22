@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 /// Transport contract for stage-4 music sources: decoded JSON over HTTP.
@@ -9,6 +11,18 @@ abstract interface class NetworkService {
     Map<String, String>? headers,
     Duration? timeout,
   });
+
+  /// GET returning the raw response body as text (for pseudo-JSON APIs).
+  Future<String> getText(
+    String path, {
+    Map<String, dynamic>? query,
+    Map<String, String>? headers,
+    Duration? timeout,
+  });
+
+  /// Parse a JSON string (tolerant helper for sources that need manual
+  /// normalization before decoding).
+  Object? parseJson(String text);
 }
 
 enum NetworkErrorKind { timeout, http, network, protocol }
@@ -80,6 +94,33 @@ class DioNetworkService implements NetworkService {
       'Response is not JSON (${data.runtimeType})',
     );
   }
+
+  @override
+  Future<String> getText(
+    String path, {
+    Map<String, dynamic>? query,
+    Map<String, String>? headers,
+    Duration? timeout,
+  }) async {
+    try {
+      final response = await _dio.get<String>(
+        path,
+        queryParameters: (query == null || query.isEmpty) ? null : query,
+        options: Options(
+          headers: headers,
+          responseType: ResponseType.plain,
+          sendTimeout: timeout,
+          receiveTimeout: timeout,
+        ),
+      );
+      return response.data ?? '';
+    } on DioException catch (error) {
+      throw _map(error);
+    }
+  }
+
+  @override
+  Object? parseJson(String text) => const JsonDecoder().convert(text);
 
   NetworkException _map(DioException error) => switch (error.type) {
         DioExceptionType.connectionTimeout ||

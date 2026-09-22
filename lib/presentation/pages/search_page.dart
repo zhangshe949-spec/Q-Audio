@@ -8,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../providers/catalog_providers.dart' show musicSearchProvider;
 import '../../presentation/providers/player_providers.dart' show playerProvider;
 import '../../domain/entities/track.dart';
+import '../../services/download/download_providers.dart'
+    show downloadServiceProvider;
 
 /// Real search page: searches all music sources in parallel.
 class SearchPage extends ConsumerStatefulWidget {
@@ -160,6 +162,45 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                 if (track.artist.isNotEmpty) track.artist,
                                 if (track.album.isNotEmpty) track.album,
                               ].join(' · '),
+                            ),
+                            trailing: IconButton(
+                              key: Key(
+                                  'search-download-${track.sourceId}-${track.id}'),
+                              icon:
+                                  const Icon(Icons.download_outlined, size: 20),
+                              tooltip: '下载',
+                              onPressed: () async {
+                                final service = ref.read(musicSearchProvider);
+                                final url = await service.resolveUrl(track);
+                                if (!context.mounted) return;
+                                if (url == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('无法获取下载地址')),
+                                  );
+                                  return;
+                                }
+                                final safeName =
+                                    '${track.artist.isNotEmpty ? '${track.artist} - ' : ''}${track.title}.mp3';
+                                await ref
+                                    .read(downloadServiceProvider)
+                                    .startDownload(
+                                      url: url,
+                                      fileName: safeName,
+                                      title: track.title,
+                                      artist: track.artist,
+                                      album: track.album,
+                                    );
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('已开始下载：${track.title}'),
+                                    action: SnackBarAction(
+                                      label: '查看',
+                                      onPressed: () => context.go('/downloads'),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                             onTap: () async {
                               final service = ref.read(musicSearchProvider);

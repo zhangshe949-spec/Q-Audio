@@ -11,7 +11,9 @@ void main() {
     // Home is now a real page: search box + quick entries + hot keywords.
     expect(find.byKey(const Key('home-search')), findsOneWidget);
     expect(find.text('快捷入口'), findsOneWidget);
-    expect(find.text('热门推荐'), findsOneWidget);
+    // 榜单区（热歌榜/新歌榜）与播放历史在加载前也应有标题占位。
+    expect(find.text('热歌榜'), findsOneWidget);
+    expect(find.text('新歌榜'), findsOneWidget);
     expect(find.text('本地音乐'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
