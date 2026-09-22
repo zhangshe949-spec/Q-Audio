@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/catalog_providers.dart';
@@ -106,7 +107,8 @@ class LocalPage extends ConsumerWidget {
                 }
                 return ListView.separated(
                   // 虚拟化优化：scrollCacheExtent 预加载可见区域外的项
-                  cacheExtent: 500.0, itemCount: tracks.length,
+                  scrollCacheExtent: const ScrollCacheExtent.pixels(500),
+                  itemCount: tracks.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final track = tracks[index];
@@ -202,7 +204,8 @@ class LocalPage extends ConsumerWidget {
             value: state.processedFiles > 0
                 ? (state.foundTracks / state.processedFiles).clamp(0.0, 1.0)
                 : null,
-            backgroundColor: colorScheme.onPrimaryContainer.withOpacity(0.2),
+            backgroundColor:
+                colorScheme.onPrimaryContainer.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation(colorScheme.onPrimaryContainer),
           ),
           TextButton(
@@ -325,7 +328,7 @@ class LocalPage extends ConsumerWidget {
               color: Theme.of(context)
                   .colorScheme
                   .onSurfaceVariant
-                  .withOpacity(0.5),
+                  .withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -451,7 +454,7 @@ class LocalPage extends ConsumerWidget {
                         ),
                       )
                     : ListView.separated(
-                        cacheExtent: 500.0,
+                        scrollCacheExtent: const ScrollCacheExtent.pixels(500),
                         controller: scrollController,
                         itemCount: directories.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),

@@ -217,10 +217,10 @@ class _DesktopLyricsOverlayState extends ConsumerState<_DesktopLyricsOverlay>
           duration: const Duration(milliseconds: 200),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.7),
+              color: Colors.black.withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -379,7 +379,7 @@ class _LyricsLine extends StatelessWidget {
           Text(
             translation!,
             style: TextStyle(
-              color: textColor.withOpacity(0.7),
+              color: textColor.withValues(alpha: 0.7),
               fontSize: fontSize * 0.85,
               height: 1.3,
             ),

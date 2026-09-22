@@ -247,7 +247,12 @@ class PlayerController extends Notifier<PlaybackState> {
   Future<void> play(Track track, String url) async {
     final generation = ++_playGeneration;
     try {
-      await _positionSub?.cancel();
+      // Fire-and-forget: awaiting cancel() here can deadlock when play() is
+      // invoked from inside the positionStream onData callback (auto-next),
+      // because a subscription cannot finish cancelling while its own event
+      // handler is still on the stack. Cancel is idempotent; the generation
+      // guard below already ignores events from stale subscriptions.
+      unawaited(_positionSub?.cancel());
       _positionSub = null;
       final engine = ref.read(audioEngineProvider);
       _engine = engine;

@@ -57,40 +57,30 @@ class _AppearanceSection extends ConsumerWidget {
         const SizedBox(height: 12),
         // 主题模式
         Card(
-          child: Column(
-            children: [
-              RadioListTile<ThemeMode>(
-                title: const Text('跟随系统'),
-                subtitle: const Text('自动根据系统深/浅色模式切换'),
-                value: ThemeMode.system,
-                groupValue: themeMode,
-                onChanged: (value) {
-                  if (value != null) {
-                    ref.read(themeModeProvider.notifier).state = value;
-                  }
-                },
-              ),
-              RadioListTile<ThemeMode>(
-                title: const Text('浅色模式'),
-                value: ThemeMode.light,
-                groupValue: themeMode,
-                onChanged: (value) {
-                  if (value != null) {
-                    ref.read(themeModeProvider.notifier).state = value;
-                  }
-                },
-              ),
-              RadioListTile<ThemeMode>(
-                title: const Text('深色模式'),
-                value: ThemeMode.dark,
-                groupValue: themeMode,
-                onChanged: (value) {
-                  if (value != null) {
-                    ref.read(themeModeProvider.notifier).state = value;
-                  }
-                },
-              ),
-            ],
+          child: RadioGroup<ThemeMode>(
+            groupValue: themeMode,
+            onChanged: (value) {
+              if (value != null) {
+                ref.read(themeModeProvider.notifier).state = value;
+              }
+            },
+            child: Column(
+              children: [
+                RadioListTile<ThemeMode>(
+                  title: const Text('跟随系统'),
+                  subtitle: const Text('自动根据系统深/浅色模式切换'),
+                  value: ThemeMode.system,
+                ),
+                RadioListTile<ThemeMode>(
+                  title: const Text('浅色模式'),
+                  value: ThemeMode.light,
+                ),
+                RadioListTile<ThemeMode>(
+                  title: const Text('深色模式'),
+                  value: ThemeMode.dark,
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -118,7 +108,7 @@ class _AppearanceSection extends ConsumerWidget {
       0xFF2E7D32: '绿色',
       0xFFC62828: '红色',
     };
-    return colors[color.value] ?? '自定义';
+    return colors[color.toARGB32()] ?? '自定义';
   }
 
   void _showAccentColorPicker(BuildContext context, WidgetRef ref) {
@@ -318,17 +308,25 @@ class _PlaybackSection extends ConsumerWidget {
             children: [
               Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [3, 5, 8, 10, 15].map((seconds) {
-                  return RadioListTile<int>(
-                    title: Text('$seconds 秒'),
-                    value: seconds * 1000,
+                children: [
+                  RadioGroup<int>(
                     groupValue: selectedDuration,
                     onChanged: (value) {
-                      if (value != null)
+                      if (value != null) {
                         setState(() => selectedDuration = value);
+                      }
                     },
-                  );
-                }).toList(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [3, 5, 8, 10, 15].map((seconds) {
+                        return RadioListTile<int>(
+                          title: Text('$seconds 秒'),
+                          value: seconds * 1000,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1077,26 +1075,28 @@ class _AudioDeviceDialogState extends ConsumerState<_AudioDeviceDialog> {
                         TextStyle(color: Theme.of(context).colorScheme.error))
                 : _devices.isEmpty
                     ? const Text('未找到音频输出设备')
-                    : ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: _devices.length,
-                        separatorBuilder: (_, __) => const Divider(height: 1),
-                        itemBuilder: (context, index) {
-                          final device = _devices[index];
-                          final isSelected = device.id == _selectedDeviceId;
-                          return RadioListTile<String>(
-                            title: Text(device.name),
-                            value: device.id,
-                            groupValue: _selectedDeviceId,
-                            onChanged: (value) =>
-                                setState(() => _selectedDeviceId = value),
-                            secondary: isSelected
-                                ? Icon(Icons.check_circle,
-                                    color:
-                                        Theme.of(context).colorScheme.primary)
-                                : null,
-                          );
-                        },
+                    : RadioGroup<String>(
+                        groupValue: _selectedDeviceId,
+                        onChanged: (value) =>
+                            setState(() => _selectedDeviceId = value),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: _devices.length,
+                          separatorBuilder: (_, __) => const Divider(height: 1),
+                          itemBuilder: (context, index) {
+                            final device = _devices[index];
+                            final isSelected = device.id == _selectedDeviceId;
+                            return RadioListTile<String>(
+                              title: Text(device.name),
+                              value: device.id,
+                              secondary: isSelected
+                                  ? Icon(Icons.check_circle,
+                                      color:
+                                          Theme.of(context).colorScheme.primary)
+                                  : null,
+                            );
+                          },
+                        ),
                       ),
       ),
       actions: [

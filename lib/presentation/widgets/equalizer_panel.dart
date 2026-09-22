@@ -70,7 +70,7 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: DropdownButtonFormField<String>(
-              value: currentPresetId,
+              initialValue: currentPresetId,
               decoration: const InputDecoration(
                 labelText: '预设',
                 border: OutlineInputBorder(),
@@ -201,7 +201,7 @@ class _EqualizerPanelState extends ConsumerState<EqualizerPanel>
                             const RoundSliderOverlayShape(overlayRadius: 16),
                         activeTrackColor: gains[i] != 0
                             ? colorScheme.primary
-                            : colorScheme.primary.withOpacity(0.5),
+                            : colorScheme.primary.withValues(alpha: 0.5),
                         inactiveTrackColor: colorScheme.surfaceContainerHighest,
                         thumbColor: gains[i] != 0
                             ? colorScheme.primary

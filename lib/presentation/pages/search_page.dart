@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -145,7 +146,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       )
                     : ListView.builder(
                         // 虚拟化优化
-                        cacheExtent: 500.0, itemCount: _results.length,
+                        scrollCacheExtent: const ScrollCacheExtent.pixels(500),
+                        itemCount: _results.length,
                         itemBuilder: (context, index) {
                           final track = _results[index];
                           return ListTile(

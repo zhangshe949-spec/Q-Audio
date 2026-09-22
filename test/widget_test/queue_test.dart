@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:async';
 
 import 'package:q_audio/domain/entities/track.dart';
 import 'package:q_audio/presentation/providers/player_providers.dart';
@@ -22,24 +21,33 @@ class ShortEngine extends FakeAudioEngine {
 Track _track(String id, {String? url}) =>
     Track(id: id, sourceId: 'test', title: 'Track $id', url: url);
 
-/// Wait for playerProvider state to reach expected track using Riverpod listener.
-Future<void> waitForTrack(WidgetTester tester, ProviderContainer container,
-    String expectedTrackId) async {
-  final completer = Completer<void>();
-  final subscription = container.listen<PlaybackState>(
-    playerProvider,
-    (_, next) {
-      if (next.track?.id == expectedTrackId && !completer.isCompleted) {
-        completer.complete();
-      }
-    },
-    fireImmediately: true,
+/// Pumps until [playerProvider] state reaches [expectedTrackId] with the
+/// given status, or fails the test after [maxPumps] iterations.
+///
+/// FakeAsync note: never await a bare future here — timers only advance when
+/// the tester pumps, so a `.timeout()` would deadlock instead of firing.
+Future<void> waitForTrack(
+  WidgetTester tester,
+  ProviderContainer container,
+  String expectedTrackId, {
+  PlaybackStatus? status,
+  int maxPumps = 100,
+}) async {
+  for (var i = 0; i < maxPumps; i++) {
+    final state = container.read(playerProvider);
+    if (state.track?.id == expectedTrackId &&
+        (status == null || state.status == status)) {
+      return;
+    }
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  final state = container.read(playerProvider);
+  fail(
+    'playerProvider never reached track=$expectedTrackId'
+    '${status != null ? ' status=$status' : ''} '
+    'after $maxPumps pumps (got track=${state.track?.id} '
+    'status=${state.status}).',
   );
-  // Pump to process any pending state updates
-  await tester.pump(const Duration(milliseconds: 16));
-  // Wait for the listener to fire, with timeout
-  await completer.future.timeout(const Duration(seconds: 10));
-  subscription.close();
 }
 
 void main() {
@@ -57,8 +65,9 @@ void main() {
     final container = ProviderScope.containerOf(context, listen: false);
     final notifier = container.read(playerProvider.notifier);
     notifier.setQueue(tracks);
-    await waitForTrack(tester, container, '2');
+    // setQueue only stages the queue; the track appears once playAt runs.
     notifier.playAt(1);
+    await waitForTrack(tester, container, '2');
     await tester.pumpAndSettle();
     expect(container.read(playerProvider).track?.id, '2');
     expect(find.byKey(const Key('mini-player')), findsOneWidget);
@@ -100,8 +109,7 @@ void main() {
     expect(container.read(playerProvider.notifier).currentIndex, 2);
 
     // At the tail: next() must not throw and must not move.
-    notifier.next();
-    await waitForTrack(tester, container, '3');
+    await notifier.next();
     await tester.pumpAndSettle();
     expect(container.read(playerProvider).track?.id, '3');
     expect(container.read(playerProvider.notifier).currentIndex, 2);
@@ -119,15 +127,14 @@ void main() {
     expect(container.read(playerProvider.notifier).currentIndex, 0);
 
     // At the head: previous() must not throw and must not move.
-    notifier.previous();
-    await waitForTrack(tester, container, '1');
+    await notifier.previous();
     await tester.pumpAndSettle();
     expect(container.read(playerProvider).track?.id, '1');
     expect(container.read(playerProvider.notifier).currentIndex, 0);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('null-url row shows a snackbar and stays idle', (tester) async {
+  testWidgets('null-url row shows an error and stays idle', (tester) async {
     final engine = FakeAudioEngine();
     final tracks = [_track('1', url: 'https://a.test/1'), _track('2')];
     await mountApp(
@@ -139,10 +146,13 @@ void main() {
     final notifier = container.read(playerProvider.notifier);
     notifier.setQueue(tracks);
     notifier.playAt(1);
-    await waitForTrack(tester, container, '1'); // Should stay on track 1
+    // playAt(1) targets the null-url track '2': the controller records it
+    // with status idle and an error message; it never plays.
+    await waitForTrack(tester, container, '2', status: PlaybackStatus.idle);
     await tester.pumpAndSettle();
     expect(container.read(playerProvider).status, PlaybackStatus.idle);
     expect(container.read(playerProvider).error, '该歌曲没有播放地址');
+    // Mini player renders whenever a track is present, idle included.
     expect(find.byKey(const Key('mini-player')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -179,7 +189,6 @@ void main() {
     // Last track: reaching the end pauses instead of throwing.
     engine.tick(const Duration(seconds: 10));
     await tester.pumpAndSettle();
-    await waitForTrack(tester, container, '2');
     expect(container.read(playerProvider).status, PlaybackStatus.paused);
     expect(tester.takeException(), isNull);
   });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:q_audio/presentation/widgets/cached_artwork.dart';
@@ -47,7 +48,8 @@ class PlaylistPage extends ConsumerWidget {
 
           return ListView.separated(
             // 虚拟化优化
-            cacheExtent: 500.0, itemCount: playlists.length,
+            scrollCacheExtent: const ScrollCacheExtent.pixels(500),
+            itemCount: playlists.length,
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final playlist = playlists[index];
@@ -67,8 +69,10 @@ class PlaylistPage extends ConsumerWidget {
           Icon(
             Icons.playlist_play_outlined,
             size: 64,
-            color:
-                Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+            color: Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant
+                .withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -462,7 +466,8 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
                 children: [
                   Icon(Icons.music_off,
                       size: 64,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
+                      color:
+                          colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                   const SizedBox(height: 16),
                   Text('播放列表为空',
                       style: Theme.of(context).textTheme.titleMedium),
@@ -479,8 +484,7 @@ class _PlaylistDetailPageState extends ConsumerState<PlaylistDetailPage> {
           : ReorderableListView.builder(
               // 虚拟化优化：使用 builder 版本
               itemCount: _playlist.trackIds.length,
-              onReorder: (oldIndex, newIndex) async {
-                if (oldIndex < newIndex) newIndex--;
+              onReorderItem: (oldIndex, newIndex) async {
                 await service.moveTrack(_playlist.id, oldIndex, newIndex);
                 setState(() {
                   _playlist = _playlist.moveTrack(oldIndex, newIndex);
