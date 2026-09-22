@@ -4,45 +4,28 @@ $ConfirmPreference = "None"
 flutter config --enable-windows-desktop
 flutter build windows --release
 
-# Find makeappx.exe: prefer x64 binary, newest Windows SDK first.
-$makeappx = $null
-$searchRoots = @(
-    "C:\Program Files (x86)\Windows Kits\10\bin",
-    "C:\Program Files\Windows Kits\10\bin"
-)
-foreach ($root in $searchRoots) {
-    if (-not (Test-Path $root)) { continue }
-    $candidates = Get-ChildItem $root -Recurse -Filter "makeappx.exe" -ErrorAction SilentlyContinue |
-        Where-Object { $_.FullName -match "\\x64\\" } |
-        Sort-Object FullName -Descending
-    if ($candidates) { $makeappx = $candidates[0]; break }
+# The raw Flutter output directory has no AppxManifest.xml, so makeappx
+# cannot pack it directly. Use the `msix` package (dev dependency) which
+# generates the manifest from pubspec msix_config and packs the MSIX.
+# msix_config in pubspec.yaml: output_path=build/msix, output_name=Q-Audio,
+# build_windows=false (we just built above), sign_msix=false.
+dart run msix:create
+
+# msix writes to build/msix/Q-Audio.msix (per pubspec msix_config).
+# Copy to the path the workflow artifact step expects.
+$msixSource = "build/msix/Q-Audio.msix"
+if (-not (Test-Path $msixSource)) {
+    # Fallback: locate whatever .msix msix:create produced.
+    $found = Get-ChildItem -Path "build" -Recurse -Filter "*.msix" -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    if (-not $found) { throw "msix:create produced no .msix under build/" }
+    $msixSource = $found.FullName
 }
-if (-not $makeappx) {
-    throw "x64 makeappx.exe not found under Windows Kits. Install Windows SDK."
-}
-Write-Host "Using makeappx: $($makeappx.FullName)"
+Write-Host "MSIX produced: $msixSource"
 
 $msixOutput = "build/windows/msix"
-if (Test-Path $msixOutput) { Remove-Item $msixOutput -Recurse -Force }
-New-Item -ItemType Directory -Path $msixOutput | Out-Null
+New-Item -ItemType Directory -Path $msixOutput -Force | Out-Null
+Copy-Item $msixSource -Destination (Join-Path $msixOutput "Q-Audio.msix") -Force
 
-# Flutter may use an architecture-specific output directory
-# (build/windows/x64/runner/Release on recent SDKs).
-$buildCandidates = @(
-    "build/windows/x64/runner/Release",
-    "build/windows/runner/Release"
-)
-$buildDir = $buildCandidates |
-    Where-Object { Test-Path $_ } |
-    Select-Object -First 1
-if (-not $buildDir) {
-    throw "Flutter Windows release output not found (tried: $($buildCandidates -join ', '))."
-}
-Write-Host "Packaging Windows build from: $buildDir"
-$msixFile = Join-Path $msixOutput "Q-Audio.msix"
-
-& $makeappx.FullName pack /d $buildDir /p $msixFile /l
-if ($LASTEXITCODE -ne 0) { throw "makeappx failed with exit code $LASTEXITCODE" }
-
-Write-Host "MSIX created: $msixFile"
+Write-Host "MSIX ready: $msixOutput\Q-Audio.msix"
 Get-ChildItem $msixOutput
