@@ -3,6 +3,7 @@ name: Q-Audio Desktop CI
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
 
@@ -44,6 +45,13 @@ jobs:
         with:
           name: Windows-MSIX
           path: build/windows/msix/*.msix
+          retention-days: 30
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/windows/msix/*.msix
+          generate_release_notes: true
 
   build-macos-dmg:
     needs: test-lint
@@ -64,3 +72,10 @@ jobs:
         with:
           name: macOS-DMG
           path: build/macos/dmg/*.dmg
+          retention-days: 30
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/macos/dmg/*.dmg
+          generate_release_notes: true
