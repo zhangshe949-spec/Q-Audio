@@ -32,6 +32,12 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE}")
 # Use Unicode for all projects.
 add_definitions(-DUNICODE -D_UNICODE)
 
+# Silence C2338 static_assert in <experimental/coroutine> pulled in
+# transitively by WinRT headers (flutter_media_session plugin) when building
+# with recent MSVC toolsets. Applies to plugins too (they inherit
+# directory-scoped definitions via add_subdirectory).
+add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+
 # Compilation settings that should be applied to most targets.
 #
 # Be cautious about adding new options here, as plugins use this function by
