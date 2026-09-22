@@ -71,7 +71,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(container.read(playerProvider).track?.id, '2');
     expect(find.byKey(const Key('mini-player')), findsOneWidget);
-    expect(find.text('Track 2'), findsOneWidget);
+    // Track title now appears in both the home "now playing" card and the
+    // mini player bar.
+    expect(find.text('Track 2'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 

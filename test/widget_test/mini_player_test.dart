@@ -108,7 +108,8 @@ void main() {
         .play(track, 'https://example.test/a.mp3');
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('mini-player')), findsOneWidget);
-    expect(find.text('晨光'), findsOneWidget);
+    // Title appears in the home "now playing" card and the mini player.
+    expect(find.text('晨光'), findsWidgets);
     expect(find.text('Alice'), findsOneWidget);
     expect(widgetContainer.read(playerProvider).status, PlaybackStatus.playing);
     await tester.tap(find.byKey(const Key('mini-play-toggle')));
